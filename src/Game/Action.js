@@ -1,7 +1,9 @@
 import { Player } from './Player'
 import { Room } from './Room'
+import { World } from './World'
 import { randomId } from './utils'
 import { say } from '../Interface/Text'
+import { addEnabledItems, clearItems } from '../Interface/Item'
 
 export class Action {
   /**
@@ -35,5 +37,25 @@ export class MoveAction extends Action {
         return actionConfig.callback()
       },
     })
+  }
+}
+
+export class InventoryAction extends Action {
+  /**
+   * Create a move action to change room
+   * @param {Object} actionConfig the action config
+   */
+  constructor(actionConfig) {
+    super({
+      ...actionConfig,
+      callback: () => {
+        if (actionConfig.world.openInventory) {
+          clearItems(actionConfig.world)
+        } else {
+          addEnabledItems(actionConfig.world)
+        }
+      },
+    })
+    this.identifier = 'inventory-button'
   }
 }

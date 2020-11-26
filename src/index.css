@@ -1,4 +1,7 @@
 body {
+  background-image: url("./images/prison_room.jpg");
+  background-size: 100%;
+  background-repeat: no-repeat;
   background-color: black;
   color: white;
 }

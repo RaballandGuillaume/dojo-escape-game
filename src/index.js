@@ -1,6 +1,7 @@
 import { World } from './Game/World'
 import { say } from './Interface/Text'
 import { addAction } from './Interface/Action'
+import { clearItems, addEnabledItems } from './Interface/Item'
 
 const main = () => {
   const world = new World('World')
@@ -53,6 +54,19 @@ const main = () => {
     isEnabled: () => player.currentRoom === room2 && room3.color === 'black',
   })
 
+  world.createItem({
+    name: 'gold key',
+    isEnabled: true,
+    callback: () => 
+      new Promise((resolve) => {
+        say(`${player.name} used the golden key ...`)
+        setTimeout(() => {
+          say(`But the key didn't work on this door ...`)
+          resolve()
+        }, 1000)
+      })
+  })
+
   setTimeout(() => {
     say(`${player.name} wakes up.`)
     addAction(
@@ -64,6 +78,22 @@ const main = () => {
         },
         room2
       )
+    )
+    addAction(
+      world.createInventoryAction({
+        identifier: 'inventory-button',
+        text: (world.openInventory ? 'Close' : 'Open') + ' Inventory',
+        callback: () => {
+          /* if (world.openInventory) {
+            clearItems(world)
+            
+          } else {
+            addEnabledItems(world)
+          }
+          world.openInventory = !(world.openInventory) */
+        },
+        isEnabled: () => true
+      })
     )
   }, 1200)
 }

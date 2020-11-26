@@ -1,8 +1,10 @@
 import { Player } from './Player'
 import { Room } from './Room'
 import { drawRoom, drawPlayer } from '../Interface/Map'
-import { Action, MoveAction } from './Action'
+import { Action, MoveAction, InventoryAction } from './Action'
 import { clearActions, addEnabledActions } from '../Interface/Action'
+import { Item } from './Item'
+import { clearItems, addEnabledItems } from '../Interface/Item'
 
 export class World {
   /**
@@ -20,6 +22,16 @@ export class World {
    */
   player = undefined
 
+  /**
+   * @type {Item[]}
+   */
+  items = []
+
+  /**
+   * @type {boolean}
+   */
+  openInventory = false
+
   constructor(name) {
     this.name = name
   }
@@ -34,6 +46,22 @@ export class World {
       return (callback ? callback() : Promise.resolve(null))
         .then(() => {
           addEnabledActions(this)
+          clearItems(this)
+        })
+        .catch(console.error)
+    }
+  }
+
+  /**
+   * @private
+   * @param {()=>Promise<void> | undefined} callback to do on item click
+   */
+  wrapCallbackForAutomaticItemsDisplay(callback) {
+    return () => {
+      clearItems(this)
+      return (callback ? callback() : Promise.resolve(null))
+        .then(() => {
+          addEnabledItems(this)
         })
         .catch(console.error)
     }
@@ -107,5 +135,45 @@ export class World {
     this.player = player
     drawPlayer(player)
     return player
+  }
+
+  createInventoryAction(actionConfig) {
+    const action = new InventoryAction(
+      {
+        ...actionConfig,
+        world: this,
+        callback: this.wrapCallbackForAutomaticActionsDisplay(
+          actionConfig.callback
+        ),
+      }
+    )
+    this.actions.push(action)
+    return action
+  }
+
+  /**
+   * Create an item
+   * @param {Object} itemConfig the item config
+   * @param {string} itemConfig.name the item name
+   * @param {boolean} itemConfig.isEnabled evaluated when opening the inventory, if undefined the item is not enabled
+   * @param {()=>Promise<void>} itemConfig.callback to do on item click
+   */
+  createItem(itemConfig) {
+    for (let k = 0 ; k < this.items.length ; k++) {
+      const item = items[k]
+      if (item.name === itemConfig.name) {
+        return item
+      }
+    }
+    const item = new Item(
+      {
+      ...itemConfig,
+      world: this,
+      callback: this.wrapCallbackForAutomaticItemsDisplay(
+        itemConfig.callback
+      ),
+    })
+    this.items.push(item)
+    return item
   }
 }
