@@ -1,5 +1,5 @@
 const inventoryId = 'inventory'
-const itemsElement = document.getElementById(inventoryId)
+const items = document.getElementById(inventoryId)
 import { Item } from '../Game/Item'
 import { World } from '../Game/World'
 
@@ -15,7 +15,7 @@ export const addItem = ({ name, callback, identifier }) => {
     id: identifier,
     innerHTML: name,
   })
-  itemsElement.append(itemElement)
+  items.append(itemElement)
 }
 
 /**
@@ -23,7 +23,7 @@ export const addItem = ({ name, callback, identifier }) => {
  * @param {World} world
  */
 export const addEnabledItems = (world) => {
-    world.items.forEach((item) => item.isEnabled && addItem(item))
+    world.items.forEach((item) => item.isEnabled() && addItem(item))
     document.getElementById('inventory-button').innerHTML = 'Close Inventory'
     world.openInventory = true
 }
@@ -41,7 +41,7 @@ export const removeItem = ({ identifier }) => {
  * Clear all items from the interface
  */
 export const clearItems = (world) => {
-  itemsElement.innerHTML = ''
+  items.innerHTML = ''
   document.getElementById('inventory-button').innerHTML = 'Open Inventory'
   world.openInventory = false
 }

@@ -56,6 +56,5 @@ export class InventoryAction extends Action {
         }
       },
     })
-    this.identifier = 'inventory-button'
   }
 }

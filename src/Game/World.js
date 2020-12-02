@@ -160,7 +160,7 @@ export class World {
    */
   createItem(itemConfig) {
     for (let k = 0 ; k < this.items.length ; k++) {
-      const item = items[k]
+      const item = this.items[k]
       if (item.name === itemConfig.name) {
         return item
       }
