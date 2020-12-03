@@ -1,6 +1,5 @@
 import { Player } from './Player'
 import { Room } from './Room'
-import { World } from './World'
 import { randomId } from './utils'
 import { say } from '../Interface/Text'
 import { addEnabledItems, clearItems } from '../Interface/Item'
@@ -56,5 +55,6 @@ export class InventoryAction extends Action {
         }
       },
     })
+    this.identifier = 'inventory-button'
   }
 }

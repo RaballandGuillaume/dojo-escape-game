@@ -149,6 +149,7 @@ const main = () => {
           player.currentRoom === room1 && 
           isIronKeyFound === false
         ),
+        id: 'inventory-button'
       })
     )
   }, 1000)
