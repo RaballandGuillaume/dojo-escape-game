@@ -1,3 +1,9 @@
+var askPlayerNameModal = document.getElementById('ask-player-name-modal')
+var playerName = document.getElementById('new-player-name')
+var closePlayerNameModal = document.getElementById('close-player-name-modal')
+var alertEmptyPlayerName = document.getElementById('alert-empty-player-name')
+var confirmButton = document.getElementById('player-name-confirm-button')
+
 import { Room } from '../Game/Room'
 import { Player } from '../Game/Player'
 import { World } from '../Game/World'
@@ -73,4 +79,38 @@ export const erasePlayer = (player) => {
 export const drawMap = (world) => {
   world.rooms.forEach(drawRoom)
   drawPlayer(world.player)
+}
+
+/**
+ * @param {Player} player - The player whose name will be changed
+ * @param {function} callback - The function to call after changing the name
+ */
+export const askPlayerName = (player, callback) => {
+  const checkPlayerName = () => {
+    if(playerName.value.length > 0) {
+      askPlayerNameModal.style.display = 'none'
+      alertEmptyPlayerName.style.display = 'none'
+      player.name = playerName.value
+      callback()
+    }
+    else {
+      alertEmptyPlayerName.style.display = 'block'
+      playerName.style.backgroundColor = 'red'
+    }
+  }
+  alertEmptyPlayerName.style.display = 'none'
+  askPlayerNameModal.style.display = 'block'
+  playerName.value = player.name
+  playerName.focus()
+  confirmButton.onclick = () => {
+    checkPlayerName()
+  }
+  closePlayerNameModal.onclick = () => {
+    checkPlayerName()
+  }
+  window.onclick = (event) => {
+    if (event.target == askPlayerNameModal) {
+      checkPlayerName()
+    }
+  }
 }

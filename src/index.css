@@ -74,6 +74,38 @@ body {
   margin: 2rem;
 }
 
+#ask-player-name-modal {
+  display: 'none';
+}
+
+#alert-empty-player-name {
+  display: 'none'
+}
+
+.close-modal {
+  float: right;
+  color: red;
+}
+
+.modal-title {
+  font-size: 2rem;
+}
+
+.modal-body {
+  position: absolute;
+  top: 20%;
+  left: 20%;
+  margin: auto auto;
+  width: 60%;
+  margin: 10px;
+  font-size: 1rem;
+  background-color: lightgray;
+}
+
+.modal-input {
+  font-weight: bold;
+}
+
 /* mobile overrides */
 @media only screen and (max-width: 50rem) {
   .interface {

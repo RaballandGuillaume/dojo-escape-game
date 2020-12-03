@@ -1,6 +1,7 @@
 import { World } from './Game/World'
 import { say } from './Interface/Text'
 import { addAction } from './Interface/Action'
+import { askPlayerName } from './Interface/Map'
 
 const main = () => {
   const world = new World('World')
@@ -14,10 +15,40 @@ const main = () => {
     color: 'black',
   })
 
-  const player = world.createPlayer('John Doe')
+  
+  const player = world.createPlayer('Player')
 
-  var isIronDoorOpened = false,
-    isIronKeyFound = false
+  var isIronDoorOpened = false
+  var isIronKeyFound = false
+
+  function beginningAction() {
+    say(`${player.name} enters the room ...`)
+    setTimeout(() => {
+      say(`... and finds an iron door on the right of the room.`)
+      addAction(
+        world.createAction({
+          text: 'Search the room with care',
+          callback: () =>
+            new Promise((resolve) => {
+              say(`${player.name} searches the room ...`)
+              setTimeout(() => {
+                say(`${player.name} found an iron key in the room`)
+                isIronKeyFound = true
+                resolve()
+              }, 3000)
+            }),
+          isEnabled: () => (
+            player.currentRoom === room1 && 
+            isIronKeyFound === false
+          ),
+          id: 'inventory-button'
+        })
+      )
+    }, 1000)
+    
+  }
+
+  // end of var definition
 
   world.createMoveAction(
     {
@@ -33,7 +64,7 @@ const main = () => {
       callback: () =>
         new Promise((resolve) => {
           setTimeout(() => {
-            say(`${player.name} found a golden door`)
+            say(`${player.name} sees a golden door on the left`)
           }, 1200)
           resolve()
         }),
@@ -96,7 +127,7 @@ const main = () => {
                 {
                   text: 'Move to room 2',
                   isEnabled: () => (
-                    (player.currentRoom === room1) || 
+                    (player.currentRoom === room1 && isIronDoorOpened) || 
                     player.currentRoom === room3
                     ),
                   world,
@@ -131,28 +162,11 @@ const main = () => {
 
   // Beginning of the scenario ...
 
-  setTimeout(() => {
-    say(`${player.name} wakes up ...\n and found an iron door.`)
-    addAction(
-      world.createAction({
-        text: 'Search the room with care',
-        callback: () =>
-          new Promise((resolve) => {
-            say(`${player.name} searches the room ...`)
-            setTimeout(() => {
-              say(`${player.name} found an iron key in the room`)
-              isIronKeyFound = true
-              resolve()
-            }, 3000)
-          }),
-        isEnabled: () => (
-          player.currentRoom === room1 && 
-          isIronKeyFound === false
-        ),
-        id: 'inventory-button'
-      })
-    )
-  }, 1000)
+  /*setTimeout(() => {
+    beginningAction()
+  }, 2000)*/
+  askPlayerName(player, beginningAction)
+
 }
 
 void main()

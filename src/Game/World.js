@@ -176,4 +176,6 @@ export class World {
     this.items.push(item)
     return item
   }
+
 }
+

@@ -27,6 +27,18 @@
       </div>
     </div>
 
+    <!-- Modals -->
+    <div id="ask-player-name-modal">
+      <div class="modal-body">
+        <span class="close-modal" id="close-player-name-modal">&times;</span>
+        <p class="modal-title">Choisis un nom pour ton joueur</p>
+        <label class="modal-input" for="new-player-name">Nom du joueur : </label>
+        <input type="text" id="new-player-name" placeholder="Entrer un nom"><br>
+        <p class="alert-message" id="alert-empty-player-name">Attention, le nom ne peut pas être vide !</p>
+        <button type="submit" class="confirm-button" id="player-name-confirm-button">Choisir ce nom</button>
+      </div>
+    </div>
+
     <script type="module" src="./index.js"></script>
     <link href="./index.css" rel="stylesheet" />
   </body>
