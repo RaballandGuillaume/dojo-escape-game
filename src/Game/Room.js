@@ -12,14 +12,16 @@ export class Room {
    * @param {number} roomConfiguration.xPos - room horizontal emplacement
    * @param {number} roomConfiguration.yPos - room vertical emplacement
    * @param {string} roomConfiguration.color - the room color
+   * @param {() => void | undefined} roomConfiguration.isDiscovered - if the player has discovered the room
    */
-  constructor({ name, height = 1, width = 1, xPos = 0, yPos = 0, color }) {
+  constructor({ name, height = 1, width = 1, xPos = 0, yPos = 0, color, isDiscovered = () => false }) {
     this.name = name
     this.height = height
     this.width = width
     this.xPos = xPos
     this.yPos = yPos
     this.color = color ? color : randomColor()
+    this.isDiscovered = isDiscovered
   }
 
   /**

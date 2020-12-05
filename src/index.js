@@ -1,30 +1,49 @@
 import { World } from './Game/World'
 import { say } from './Interface/Text'
 import { addAction } from './Interface/Action'
-import { askPlayerName } from './Interface/Map'
+import { askPlayerName, renamePlayer } from './Interface/Map'
+import { playerButton, resetButton, pauseButton, soundButton } from './Interface/Parameters'
 
 const main = () => {
   const world = new World('World')
-
-  const room1 = world.createRoom({ name: 'room 1', height: 2 })
-  const room2 = world.createRoom({ name: 'room 2', xPos: 1 })
-  const room3 = world.createRoom({
-    name: 'room 3',
-    xPos: 1,
-    yPos: 1,
-    color: 'black',
-  })
-
   
-  const player = world.createPlayer('Player')
-
+  var gameStarted = false
   var isIronDoorOpened = false
   var isIronKeyFound = false
   var isIronKeyUsed = false
   var isGoldenKeyFound = false
   var isGoldenKeyUsed = false
 
-  function beginningAction() {
+  var isRoom1Discovered = true
+  const room1 = world.createRoom({ 
+    name: 'Room 1', 
+    height: 2, 
+    isDiscovered: () => (
+      isRoom1Discovered === true
+    )
+  })
+  var isRoom2Discovered = true
+  const room2 = world.createRoom({ 
+    name: 'Room 2', 
+    xPos: 1,
+    isDiscovered: () => (
+      isRoom2Discovered === true
+    )
+  })
+  var isRoom3Discovered = false
+  const room3 = world.createRoom({
+    name: 'Room 3',
+    xPos: 1,
+    yPos: 1,
+    color: 'black',
+    isDiscovered: () => (
+      isRoom3Discovered === true
+    )
+  })
+
+  const player = world.createPlayer('Player')
+
+  const beginningAction = () => {
     say(`${player.name} enters the room ...`)
     setTimeout(() => {
       say(`... and finds an iron door on the right of the room.`)
@@ -72,7 +91,7 @@ const main = () => {
         }),
       isEnabled: () => (
         player.currentRoom === room2 && 
-        room3.color !== 'black'
+        room3.isDiscovered()
       ),
     },
     room3
@@ -91,7 +110,7 @@ const main = () => {
       }),
     isEnabled: () => (
       player.currentRoom === room2 && 
-      room3.color !== 'black' &&
+      room3.isDiscovered() &&
       isGoldenKeyFound === false
     ),
   })
@@ -103,13 +122,14 @@ const main = () => {
         say(`${player.name} searches the room ...`)
         setTimeout(() => {
           say(`${player.name} found a little trap door to another room`)
+          isRoom3Discovered = true
           room3.updateColor()
           resolve()
         }, 3000)
       }),
     isEnabled: () => (
       player.currentRoom === room2 && 
-      room3.color === 'black'
+      !room3.isDiscovered()
     ),
   })
 
@@ -173,8 +193,8 @@ const main = () => {
   )
 
   // Beginning of the scenario ...
-
   askPlayerName(player, beginningAction)
+  playerButton.onclick = () => askPlayerName(player)
 }
 
 void main()

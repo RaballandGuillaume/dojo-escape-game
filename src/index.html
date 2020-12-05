@@ -11,7 +11,7 @@
     <div class="app-container">
       <div class="interface">
         <div class="primary-container">
-          <h1 class="title">Escape game</h1>
+          <h1 class="title" id='title'>Escape game</h1>
 
           <canvas id="map" height="300" width="300"
             >If you see this you need a compatible browser, try Firefox,
@@ -21,12 +21,18 @@
           
         </div>
         <div class="secondary-container">
-          <h2 id='actions-title'>Actions</h2>
+          <h2 id='actions-title'>Actions in this room</h2>
           <div class="actions" id="actions"></div>
           <div id="inventory">
             <p id='inventory-title'>Inventory</p>
             <div id='inventory-items'></div>
           </div>
+        </div>
+        <div id="parameters">
+          <button type="button" class="parameter-button" id="parameter-player-button">Player</button>
+          <button type="button" class="parameter-button" id="parameter-reset-button">Reset</button>
+          <button type="button" class="parameter-button" id="parameter-pause-button">Pause</button>
+          <button type="button" class="parameter-button" id="parameter-sound-button">Sound</button>
         </div>
       </div>
     </div>

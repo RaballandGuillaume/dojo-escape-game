@@ -41,7 +41,13 @@ export const addItem = ({ name, callback, identifier, isUsed }) => {
  */
 export const addEnabledItems = (world) => {
     const inventoryButton = document.getElementById('inventory-button')
+    inventory.innerHTML = ''
     world.items.forEach((item) => item.isEnabled() && addItem(item))
+    if (inventory.innerHTML === '') {
+      inventory.innerHTML = 'Your inventory is empty'
+      inventory.style.fontStyle = 'italic'
+      inventory.style.textAlign = 'center'
+    }
     inventoryButton.innerHTML = 'Close Inventory'
     inventoryContainer.style.display = 'block'
     world.openInventory = true

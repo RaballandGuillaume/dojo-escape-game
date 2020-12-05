@@ -1,6 +1,6 @@
 import { Player } from './Player'
 import { Room } from './Room'
-import { drawRoom, addRoomNames, drawPlayer } from '../Interface/Map'
+import { drawRoom, drawPlayer } from '../Interface/Map'
 import { Action, MoveAction, InventoryAction } from './Action'
 import { clearActions, addEnabledActions } from '../Interface/Action'
 import { Item } from './Item'
@@ -74,7 +74,6 @@ export class World {
     const room = new Room(roomConfiguration)
     this.rooms.push(room)
     drawRoom(room)
-    addRoomNames(room)
     return room
   }
 
