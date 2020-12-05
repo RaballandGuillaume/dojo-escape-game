@@ -26,6 +26,9 @@ export const drawRoom = (room) => {
     room.width * scaling,
     room.height * scaling
   )
+  mapContext.font = '1rem Arial'
+  mapContext.fillStyle = 'white'
+  mapContext.fillText(room.name, room.xPos * scaling + 5, room.yPos * scaling + 20)
 }
 
 /**
@@ -78,6 +81,7 @@ export const erasePlayer = (player) => {
  */
 export const drawMap = (world) => {
   world.rooms.forEach(drawRoom)
+  world.rooms.forEach(addRoomNames)
   drawPlayer(world.player)
 }
 
