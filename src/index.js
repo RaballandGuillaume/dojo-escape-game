@@ -20,6 +20,9 @@ const main = () => {
 
   var isIronDoorOpened = false
   var isIronKeyFound = false
+  var isIronKeyUsed = false
+  var isGoldenKeyFound = false
+  var isGoldenKeyUsed = false
 
   function beginningAction() {
     say(`${player.name} enters the room ...`)
@@ -45,7 +48,6 @@ const main = () => {
         })
       )
     }, 1000)
-    
   }
 
   // end of var definition
@@ -77,6 +79,24 @@ const main = () => {
   )
 
   world.createAction({
+    text: 'Search again the room with care',
+    callback: () =>
+      new Promise((resolve) => {
+        say(`${player.name} searches the room ...`)
+        setTimeout(() => {
+          say(`${player.name} found a gold key in the room`)
+          isGoldenKeyFound = true
+          resolve()
+        }, 2000)
+      }),
+    isEnabled: () => (
+      player.currentRoom === room2 && 
+      room3.color !== 'black' &&
+      isGoldenKeyFound === false
+    ),
+  })
+
+  world.createAction({
     text: 'Search the room with care',
     callback: () =>
       new Promise((resolve) => {
@@ -95,10 +115,11 @@ const main = () => {
 
   world.createItem({
     name: 'gold key',
-    isEnabled: () => (true),
+    isEnabled: () => (isGoldenKeyFound === true),
+    isUsed: () => (isGoldenKeyUsed === true),
     callback: () => 
       new Promise((resolve) => {
-        say(`${player.name} used the golden key ...`)
+        say(`${player.name} used the gold key ...`)
         setTimeout(() => {
           if (player.currentRoom === room3) {
             say(`${player.name} found the exit 🎉`)
@@ -112,15 +133,15 @@ const main = () => {
 
   world.createItem({
     name: 'iron key',
-    isEnabled: () => (
-      isIronKeyFound === true
-    ),
+    isEnabled: () => (isIronKeyFound === true),
+    isUsed: () => (isIronKeyUsed === true),
     callback: () => 
       new Promise((resolve) => {
         say(`${player.name} used the iron key ...`)
         setTimeout(() => {
           if (player.currentRoom === room1) {
             isIronDoorOpened = true
+            isIronKeyUsed = true
             say(`${player.name} opened the iron door`)
             addAction(
               world.createMoveAction(
@@ -135,6 +156,7 @@ const main = () => {
                 room2
               )
             )
+
           } else {
             say(`But the key didn't work on this door ...`)
           }
@@ -145,28 +167,14 @@ const main = () => {
 
   addAction(
     world.createInventoryAction({
-      identifier: 'inventory-button',
       text: (world.openInventory ? 'Close' : 'Open') + ' Inventory',
-      callback: () => {
-        /* if (world.openInventory) {
-          clearItems(world)
-          
-        } else {
-          addEnabledItems(world)
-        }
-        world.openInventory = !(world.openInventory) */
-      },
       isEnabled: () => true
     })
   )
 
   // Beginning of the scenario ...
 
-  /*setTimeout(() => {
-    beginningAction()
-  }, 2000)*/
   askPlayerName(player, beginningAction)
-
 }
 
 void main()

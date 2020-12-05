@@ -1,5 +1,7 @@
-const inventoryId = 'inventory'
-const items = document.getElementById(inventoryId)
+const inventoryId = 'inventory-items'
+const inventory = document.getElementById(inventoryId)
+const inventoryContainerId = 'inventory'
+const inventoryContainer = document.getElementById(inventoryContainerId)
 import { Item } from '../Game/Item'
 import { World } from '../Game/World'
 
@@ -7,15 +9,30 @@ import { World } from '../Game/World'
  * Add an item to the interface
  * @param {Item} item item to register
  */
-export const addItem = ({ name, callback, identifier }) => {
+export const addItem = ({ name, callback, identifier, isUsed }) => {
   const itemElement = document.createElement('button')
-  Object.assign(itemElement, {
-    classList: ['item-button'],
-    onclick: callback,
-    id: identifier,
-    innerHTML: name,
-  })
-  items.append(itemElement)
+  if (isUsed()) {
+    Object.assign(itemElement, {
+      classList: ['item-button item-button-used'],
+      title: 'You already used this item',
+      onclick: null,
+      disabled: true,
+      id: identifier,
+      innerHTML: name,
+    })
+  }
+  else {
+    Object.assign(itemElement, {
+      classList: ['item-button'],
+      title: 'Use this item',
+      onclick: callback,
+      disabled: false,
+      id: identifier,
+      innerHTML: name,
+    })
+  }
+  
+  inventory.append(itemElement)
 }
 
 /**
@@ -23,8 +40,10 @@ export const addItem = ({ name, callback, identifier }) => {
  * @param {World} world
  */
 export const addEnabledItems = (world) => {
+    const inventoryButton = document.getElementById('inventory-button')
     world.items.forEach((item) => item.isEnabled() && addItem(item))
-    document.getElementById('inventory-button').innerHTML = 'Close Inventory'
+    inventoryButton.innerHTML = 'Close Inventory'
+    inventoryContainer.style.display = 'block'
     world.openInventory = true
 }
 
@@ -41,7 +60,9 @@ export const removeItem = ({ identifier }) => {
  * Clear all items from the interface
  */
 export const clearItems = (world) => {
-  items.innerHTML = ''
-  document.getElementById('inventory-button').innerHTML = 'Open Inventory'
+  const inventoryButton = document.getElementById('inventory-button')
+  inventory.innerHTML = ''
+  inventoryButton.innerHTML = 'Open Inventory'
+  inventoryContainer.style.display = 'none'
   world.openInventory = false
 }

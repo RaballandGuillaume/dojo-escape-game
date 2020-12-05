@@ -95,7 +95,7 @@ export const askPlayerName = (player, callback) => {
     }
     else {
       alertEmptyPlayerName.style.display = 'block'
-      playerName.style.backgroundColor = 'red'
+      playerName.style.backgroundColor = 'lightred'
     }
   }
   alertEmptyPlayerName.style.display = 'none'
@@ -113,4 +113,9 @@ export const askPlayerName = (player, callback) => {
       checkPlayerName()
     }
   }
+  playerName.addEventListener('keyup', function (event) {
+    if (event.key === 'Enter') {
+      checkPlayerName()
+    }
+  })
 }

@@ -18,24 +18,32 @@
             Chrome</canvas
           >
           <p class="speak" id="text"></p>
+          
         </div>
         <div class="secondary-container">
-          <h2>Actions</h2>
+          <h2 id='actions-title'>Actions</h2>
           <div class="actions" id="actions"></div>
-          <div class="inventory" id="inventory"></div>
+          <div id="inventory">
+            <p id='inventory-title'>Inventory</p>
+            <div id='inventory-items'></div>
+          </div>
         </div>
       </div>
     </div>
 
     <!-- Modals -->
-    <div id="ask-player-name-modal">
+    <div class="modal" id="ask-player-name-modal">
       <div class="modal-body">
         <span class="close-modal" id="close-player-name-modal">&times;</span>
-        <p class="modal-title">Choisis un nom pour ton joueur</p>
-        <label class="modal-input" for="new-player-name">Nom du joueur : </label>
-        <input type="text" id="new-player-name" placeholder="Entrer un nom"><br>
-        <p class="alert-message" id="alert-empty-player-name">Attention, le nom ne peut pas être vide !</p>
-        <button type="submit" class="confirm-button" id="player-name-confirm-button">Choisir ce nom</button>
+        <h2 class="modal-title">Choose the name of your player to begin</h2>
+        <div id="ask-player-name-modal-group">
+          <div class="input-group">
+            <label class="modal-input-label" for="new-player-name">Name : </label>
+            <input type="text" class="modal-input" id="new-player-name" placeholder="Choose a name...">
+          </div>
+            <p class="alert-message" id="alert-empty-player-name">The name can't be empty !</p>
+          <button type="submit" class="confirm-button" id="player-name-confirm-button">Choose this name</button>
+        </div>
       </div>
     </div>
 
