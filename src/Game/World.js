@@ -69,6 +69,13 @@ export class World {
 
   /**
    * @param {Object} roomConfiguration - this is the room configuration
+   * @param {string} roomConfiguration.name - the name of the room
+   * @param {number} roomConfiguration.height - room height
+   * @param {number} roomConfiguration.width - room width
+   * @param {number} roomConfiguration.xPos - room horizontal emplacement
+   * @param {number} roomConfiguration.yPos - room vertical emplacement
+   * @param {string} roomConfiguration.color - the room color
+   * @param {() => void | undefined} roomConfiguration.isDiscovered - if the player has discovered the room
    */
   createRoom(roomConfiguration) {
     const room = new Room(roomConfiguration)
@@ -137,6 +144,13 @@ export class World {
     return player
   }
 
+  /**
+   * Create the inventory as an action
+   * @param {Object} actionConfig the action config
+   * @param {string} actionConfig.text the action text
+   * @param {()=>void | undefined} actionConfig.isEnabled evaluated after each action for action availability, if undefined the action is not automatically enabled
+   * @param {()=>Promise<void> | undefined} actionConfig.callback to do on action click
+   */
   createInventoryAction(actionConfig) {
     const action = new InventoryAction(
       {
@@ -176,6 +190,5 @@ export class World {
     this.items.push(item)
     return item
   }
-
 }
 

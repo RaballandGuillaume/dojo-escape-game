@@ -28,7 +28,7 @@ const updateTitle = (player) => {
  * @param {Room} room - The room to draw
  */
 export const drawRoom = (room) => {
-  mapContext.fillStyle = room.color
+  mapContext.fillStyle = room.isDiscovered()?room.color:'black'
   mapContext.fillRect(
     room.xPos * scaling,
     room.yPos * scaling,
@@ -81,7 +81,6 @@ export const erasePlayer = (player) => {
  */
 export const drawMap = (world) => {
   world.rooms.forEach(drawRoom)
-  world.rooms.forEach(addRoomNames)
   drawPlayer(world.player)
 }
 
@@ -90,6 +89,7 @@ export const drawMap = (world) => {
  * @param {function} callback - The function to call after changing the name
  */
 export const askPlayerName = (player, callback = undefined) => {
+  
   const pressEnterListener = (event) => {
     if (event.key === 'Enter') {
       checkPlayerName()
@@ -102,6 +102,8 @@ export const askPlayerName = (player, callback = undefined) => {
       player.name = playerName.value
       callback?callback():{};
       playerName.removeEventListener('keyup', pressEnterListener)
+      erasePlayer(player)
+      drawPlayer(player)
       return
     }
     else {
