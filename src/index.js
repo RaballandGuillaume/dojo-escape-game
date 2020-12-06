@@ -82,7 +82,7 @@ const main = () => {
     })
     player.move(currentRoom)
   }
-  
+
   // Game functions
   const resetGame = () => {
     isIronDoorOpened = false
@@ -98,10 +98,7 @@ const main = () => {
     clearItems(world)
     addEnabledItems(world)
     drawMap(world)
-    say(`${player.name} enters the room ...`)
-    setTimeout(() => {
-      say(`... and finds an iron door on the right of the room.`)
-    }, 1500)
+    beginningAction()
   }
 
   const updateLocalData = () => {
@@ -123,163 +120,161 @@ const main = () => {
     say(`${player.name} enters the room ...`)
     setTimeout(() => {
       say(`... and finds an iron door on the right of the room.`)
-      addAction(
-        world.createAction({
-          text: 'Search the room with care',
-          callback: () =>
-            new Promise((resolve) => {
-              say(`${player.name} searches the room ...`)
-              setTimeout(() => {
-                say(`${player.name} found an iron key in the room`)
-                isIronKeyFound = true
-                updateLocalData()
-                resolve()
-              }, 3000)
-            }),
-          isEnabled: () => (
-            player.currentRoom === room1 && 
-            isIronKeyFound === false
-          ),
-          id: 'inventory-button'
-        })
-      )
     }, 1000)
   }
 
   // Create actions and items
-  if (true || !jsonData) {
-    world.createMoveAction(
-      {
-        text: 'Move to room 1',
-        isEnabled: () => player.currentRoom === room2,
-      },
-      room1
-    )
+  world.createAction({
+    text: 'Search the room with care',
+    callback: () =>
+      new Promise((resolve) => {
+        say(`${player.name} searches the room ...`)
+        setTimeout(() => {
+          say(`${player.name} found an iron key in the room`)
+          isIronKeyFound = true
+          updateLocalData()
+          resolve()
+        }, 3000)
+      }),
+    isEnabled: () => (
+      player.currentRoom === room1 && 
+      isIronKeyFound === false
+    ),
+    id: 'inventory-button'
+  })
 
-    world.createMoveAction(
-      {
-        text: 'Move to room 3',
-        callback: () =>
-          new Promise((resolve) => {
-            setTimeout(() => {
-              say(`${player.name} sees a golden door on the left`)
-              updateLocalData()
-              resolve()
-            }, 1200)
-          }),
-        isEnabled: () => (
-          player.currentRoom === room2 && 
-          room3.isDiscovered()
-        ),
-      },
-      room3
-    )
+  world.createMoveAction(
+    {
+      text: 'Move to room 1',
+      callback: () => updateLocalData(),
+      isEnabled: () => player.currentRoom === room2,
+    },
+    room1
+  )
 
-    world.createAction({
-      text: 'Search again the room with care',
+  world.createMoveAction(
+    {
+      text: 'Move to room 3',
       callback: () =>
         new Promise((resolve) => {
-          say(`${player.name} searches the room ...`)
           setTimeout(() => {
-            say(`${player.name} found a gold key in the room`)
-            isGoldenKeyFound = true
+            say(`${player.name} sees a golden door on the left`)
             updateLocalData()
             resolve()
-          }, 2000)
+          }, 1200)
         }),
       isEnabled: () => (
         player.currentRoom === room2 && 
-        room3.isDiscovered() &&
-        isGoldenKeyFound === false
+        room3.isDiscovered()
       ),
-    })
+    },
+    room3
+  )
 
-    world.createAction({
-      text: 'Search the room with care',
-      callback: () =>
-        new Promise((resolve) => {
-          say(`${player.name} searches the room ...`)
-          setTimeout(() => {
-            say(`${player.name} found a little trap door to another room`)
-            isRoom3Found = true
-            room3.updateColor()
-            updateLocalData()
-            resolve()
-          }, 3000)
-        }),
-      isEnabled: () => (
-        player.currentRoom === room2 && 
-        !room3.isDiscovered()
-      ),
-    })
+  world.createAction({
+    text: 'Search again the room with care',
+    callback: () =>
+      new Promise((resolve) => {
+        say(`${player.name} searches the room ...`)
+        setTimeout(() => {
+          say(`${player.name} found a gold key in the room`)
+          isGoldenKeyFound = true
+          updateLocalData()
+          resolve()
+        }, 2000)
+      }),
+    isEnabled: () => (
+      player.currentRoom === room2 && 
+      room3.isDiscovered() &&
+      isGoldenKeyFound === false
+    ),
+  })
 
-    world.createItem({
-      name: 'gold key',
-      isEnabled: () => (isGoldenKeyFound === true),
-      isUsed: () => (false),
-      callback: () => 
-        new Promise((resolve) => {
-          say(`${player.name} used the gold key ...`)
-          setTimeout(() => {
-            if (player.currentRoom === room3) {
-              say(`${player.name} found the exit 🎉`)
-              isGoldenKeyUsed = true
-            } else {
-              say(`But the key didn't work on this door ...`)
-            }
-            updateLocalData()
-            resolve()
-          }, 1000)
-        })
-    })
+  world.createAction({
+    text: 'Search the room with care',
+    callback: () =>
+      new Promise((resolve) => {
+        say(`${player.name} searches the room ...`)
+        setTimeout(() => {
+          say(`${player.name} found a little trap door to another room`)
+          isRoom3Found = true
+          room3.updateColor()
+          updateLocalData()
+          resolve()
+        }, 3000)
+      }),
+    isEnabled: () => (
+      player.currentRoom === room2 && 
+      !room3.isDiscovered()
+    ),
+  })
 
-    world.createMoveAction(
-      {
-        text: 'Move to room 2',
-        callback: () =>
-          new Promise((resolve) => {
-            updateLocalData()
-            resolve()
-          }),
-        isEnabled: () => (
-          (player.currentRoom === room1 && isIronDoorOpened) || 
-          player.currentRoom === room3
-          ),
-        world,
-      },
-      room2
-    )
-
-    world.createItem({
-      name: 'iron key',
-      isEnabled: () => (isIronKeyFound === true),
-      isUsed: () => (isIronKeyUsed === true),
-      callback: () => 
-        new Promise((resolve) => {
-          say(`${player.name} used the iron key ...`)
-          setTimeout(() => {
-            if (player.currentRoom === room1) {
-              isIronDoorOpened = true
-              isIronKeyUsed = true
-              say(`${player.name} opened the iron door`)
-              clearActions()
-              addEnabledActions(world)
-            } else {
-              say(`But the key didn't work on this door ...`)
-            }
-            updateLocalData()
-            resolve()
-          }, 1000)
-        })
-    })
-
-    addAction(
-      world.createInventoryAction({
-        text: (world.openInventory ? 'Close' : 'Open') + ' Inventory',
-        isEnabled: () => true
+  world.createItem({
+    name: 'gold key',
+    isEnabled: () => (isGoldenKeyFound === true),
+    isUsed: () => (false),
+    callback: () => 
+      new Promise((resolve) => {
+        say(`${player.name} used the gold key ...`)
+        setTimeout(() => {
+          if (player.currentRoom === room3) {
+            say(`${player.name} found the exit 🎉`)
+            isGoldenKeyUsed = true
+          } else {
+            say(`But the key didn't work on this door ...`)
+          }
+          updateLocalData()
+          resolve()
+        }, 1000)
       })
-    )
-  }
+  })
+
+  world.createMoveAction(
+    {
+      text: 'Move to room 2',
+      callback: () =>
+        new Promise((resolve) => {
+          updateLocalData()
+          resolve()
+        }),
+      isEnabled: () => (
+        (player.currentRoom === room1 && isIronDoorOpened) || 
+        player.currentRoom === room3
+        ),
+      world,
+    },
+    room2
+  )
+
+  world.createItem({
+    name: 'iron key',
+    isEnabled: () => (isIronKeyFound === true),
+    isUsed: () => (isIronKeyUsed === true),
+    callback: () => 
+      new Promise((resolve) => {
+        say(`${player.name} used the iron key ...`)
+        setTimeout(() => {
+          if (player.currentRoom === room1) {
+            isIronDoorOpened = true
+            isIronKeyUsed = true
+            say(`${player.name} opened the iron door`)
+            clearActions()
+            addEnabledActions(world)
+          } else {
+            say(`But the key didn't work on this door ...`)
+          }
+          updateLocalData()
+          resolve()
+        }, 1000)
+      })
+  })
+
+  addAction(
+    world.createInventoryAction({
+      text: (world.openInventory ? 'Close' : 'Open') + ' Inventory',
+      isEnabled: () => true
+    })
+  )
 
   // Configuration of the parameters
   playerButton.onclick = () => askPlayerName(player)
