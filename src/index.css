@@ -75,12 +75,12 @@ body {
 }
 
 .original-map {
-  background-image: url('./Images/map.png');
+  background-image: url('./images/map.png');
   background-size: cover;
 }
 
 .win-map {
-  background-image: url('./Images/win_map.png');
+  background-image: url('./images/win_map.png');
   background-size: cover;
 }
 
@@ -277,35 +277,35 @@ body {
 
 /* background images */
 .room1 {
-  background-image: url('./Images/room1.jpg');
+  background-image: url('./images/room1.jpg');
 }
 
 .room2 {
-  background-image: url('./Images/room2_back.jpg');
+  background-image: url('./images/room2_back.jpg');
 }
 
 .room3 {
-  background-image: url('./Images/room3.jpg');
+  background-image: url('./images/room3.jpg');
 }
 
 .room4 {
-  background-image: url('./Images/room4.jpg');
+  background-image: url('./images/room4.jpg');
 }
 
 .room5 {
-  background-image: url('./Images/room5.jpg');
+  background-image: url('./images/room5.jpg');
 }
 
 .room6 {
-  background-image: url('./Images/room6_back.jpg');
+  background-image: url('./images/room6_back.jpg');
 }
 
 .room7 {
-  background-image: url('./Images/room7.jpg');
+  background-image: url('./images/room7.jpg');
 }
 
 .win {
-  background-image: url('./Images/win.jpg');
+  background-image: url('./images/win.jpg');
 }
 
 /* mobile overrides */
