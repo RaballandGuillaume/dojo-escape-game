@@ -153,10 +153,11 @@ export const askPlayerName = (player, callback = undefined) => {
   playerName.addEventListener('keyup', pressEnterListener)
 }
 
-export const winGame = () => {
+export const winGame = (player) => {
   background.classList = ['win']
   title.innerHTML = 'Congratulations !'
   mapCanvas.classList = ['win-map']
+  erasePlayer(player)
 }
 
 /**

@@ -304,7 +304,7 @@ const main = () => {
         new Promise((resolve) => {
           say(`${player.name} escaped and won the game ! 🎉`)
           setTimeout(() => {
-            winGame()
+            winGame(player)
             updateLocalData()
             resolve()
           }, 500)
