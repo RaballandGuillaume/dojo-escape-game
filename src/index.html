@@ -6,18 +6,19 @@
     <title>Escape game</title>
     <link href="./assets/sanitize.css" rel="stylesheet" />
   </head>
-  <body>
+  <body id="background">
     <noscript> You need to enable JavaScript to run this app. </noscript>
     <div class="app-container">
       <div class="interface">
         <div class="primary-container">
           <h1 class="title" id='title'>Escape game</h1>
 
-          <canvas id="map" height="300" width="300"
+          <p class="speak" id="text"></p>
+
+          <canvas id="map" class="original-map" height="300" width="300"
             >If you see this you need a compatible browser, try Firefox,
             Chrome</canvas
           >
-          <p class="speak" id="text"></p>
           
         </div>
         <div class="secondary-container">
@@ -45,7 +46,7 @@
         <div id="ask-player-name-modal-group">
           <div class="input-group">
             <label class="modal-input-label" for="new-player-name">Name : </label>
-            <input type="text" class="modal-input" id="new-player-name" placeholder="Choose a name...">
+            <input type="text" maxlength=12 class="modal-input" id="new-player-name" placeholder="Choose a name...">
           </div>
             <p class="alert-message" id="alert-empty-player-name">The name can't be empty !</p>
           <button type="submit" class="confirm-button" id="player-name-confirm-button">Choose this name</button>

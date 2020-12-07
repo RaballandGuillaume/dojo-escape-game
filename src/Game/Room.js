@@ -14,7 +14,8 @@ export class Room {
    * @param {string} roomConfiguration.color - the room color
    * @param {() => void | undefined} roomConfiguration.isDiscovered - if the player has discovered the room
    */
-  constructor({ name, height = 1, width = 1, xPos = 0, yPos = 0, color, isDiscovered = () => false }) {
+  constructor({ index, name, height = 1, width = 1, xPos = 0, yPos = 0, color, isDiscovered = () => false }) {
+    this.index = index
     this.name = name
     this.height = height
     this.width = width

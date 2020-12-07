@@ -4,13 +4,15 @@ const closePlayerNameModal = document.getElementById('close-player-name-modal')
 const alertEmptyPlayerName = document.getElementById('alert-empty-player-name')
 const confirmButton = document.getElementById('player-name-confirm-button')
 const title = document.getElementById('title')
+const background = document.getElementById('background')
+const mapImages = ['win', 'room1', 'room2', 'room3', 'room4', 'room5', 'room6', 'room7']
 
 import { Room } from '../Game/Room'
 import { Player } from '../Game/Player'
 import { World } from '../Game/World'
 
 const canvasId = 'map'
-const scaling = 150
+const scaling = 100
 const playerSize = 1 / 10
 
 const mapCanvas = document.getElementById(canvasId)
@@ -21,22 +23,43 @@ const mapContext = mapCanvas.getContext('2d')
  * @param {Player} player - the player
  */
 const updateTitle = (player) => {
+  const backgroundImage = mapImages[player.currentRoom.index]
   title.innerHTML = player.currentRoom.name
+  background.classList = [backgroundImage]
 }
 
 /**
  * @param {Room} room - The room to draw
  */
 export const drawRoom = (room) => {
-  mapContext.fillStyle = room.isDiscovered()?room.color:'black'
-  mapContext.fillRect(
-    room.xPos * scaling,
-    room.yPos * scaling,
-    room.width * scaling,
-    room.height * scaling
-  )
+  if (!room.isDiscovered()) {
+    mapContext.fillStyle = 'black'
+    mapContext.fillRect(
+      room.xPos * scaling,
+      room.yPos * scaling,
+      room.width * scaling,
+      room.height * scaling
+    )
+  }
   if (room.isDiscovered()) {
-    mapContext.font = '1rem Arial'
+    mapContext.clearRect(
+      room.xPos * scaling,
+      room.yPos * scaling,
+      room.width * scaling,
+      room.height * scaling
+    )
+    mapContext.fillStyle = 'rgba(0,0,0,0.5)'
+    mapContext.fillRect(
+      room.xPos * scaling,
+      room.yPos * scaling,
+      room.width * scaling,
+      room.height * scaling
+    )
+    /*var img = document.createElement('img')
+    img.src = './Images/' + mapImages[room.index] + '.jpg'
+    console.log(img.src)
+    mapContext.drawImage(img, room.xPos * scaling, room.yPos * scaling, room.width * scaling, room.height * scaling)*/
+    mapContext.font = '0.8rem Arial'
     mapContext.fillStyle = 'white'
     mapContext.textAlign = 'start'
     mapContext.fillText(room.name, room.xPos * scaling + 5, room.yPos * scaling + 20)
@@ -51,7 +74,7 @@ export const drawPlayer = (player) => {
   const playerXPos =
     (player.currentRoom.xPos + player.currentRoom.width / 2) * scaling
   const playerYPos =
-    (player.currentRoom.yPos + player.currentRoom.height / 2) * scaling
+    (player.currentRoom.yPos + player.currentRoom.height / 2) * scaling + 10
   mapContext.beginPath()
   mapContext.arc(
     playerXPos,
@@ -64,7 +87,8 @@ export const drawPlayer = (player) => {
   mapContext.fill()
   mapContext.fillStyle = 'white'
   mapContext.textAlign = 'center'
-  mapContext.fillText(player.name, playerXPos, playerYPos - playerSize * scaling - 8)
+  mapContext.font = '0.8rem Arial'
+  mapContext.fillText(player.name, playerXPos, playerYPos - playerSize * scaling - 5)
   updateTitle(player)
 }
 
@@ -127,4 +151,19 @@ export const askPlayerName = (player, callback = undefined) => {
     }
   }
   playerName.addEventListener('keyup', pressEnterListener)
+}
+
+export const winGame = () => {
+  background.classList = ['win']
+  title.innerHTML = 'Congratulations !'
+  mapCanvas.classList = ['win-map']
+}
+
+/**
+ * Draw a given world.
+ * @param {World} world - The world to draw.
+ */
+export const restartDrawMap = (world) => {
+  mapCanvas.classList = ['original-map']
+  drawMap(world)
 }

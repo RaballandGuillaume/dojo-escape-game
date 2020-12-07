@@ -1,6 +1,5 @@
 body {
-  background-image: url("./Images/prison_room.jpg");
-  background-size: 100%;
+  background-size: cover;
   background-repeat: no-repeat;
   background-color: black;
   color: white;
@@ -15,6 +14,7 @@ body {
 
 .interface {
   display: flex;
+  
   width: 100%;
   justify-content: center;
   flex-direction: row;
@@ -71,6 +71,17 @@ body {
 }
 #map {
   border: 1px solid white;
+  
+}
+
+.original-map {
+  background-image: url('./Images/map.png');
+  background-size: cover;
+}
+
+.win-map {
+  background-image: url('./Images/win_map.png');
+  background-size: cover;
 }
 
 .title {
@@ -101,6 +112,7 @@ body {
 #ask-player-name-modal-group {
   display: flex;
   flex-direction: column;
+  margin-top: 2rem;
   height: 60%;
   justify-content: center;
   align-items: center;
@@ -138,11 +150,11 @@ body {
 
 .modal-body {
   position: absolute;
-  top: 20%;
+  top: 30%;
   left: 10%;
   margin: auto auto;
   width: 80%;
-  height: 60%;
+  height: 50%;
   background-color: dimgray;
   border: 6px solid #990000;
   padding: 1rem;
@@ -261,6 +273,39 @@ body {
 
 .parameter-button:focus {
   outline: none;
+}
+
+/* background images */
+.room1 {
+  background-image: url('./Images/room1.jpg');
+}
+
+.room2 {
+  background-image: url('./Images/room2_back.jpg');
+}
+
+.room3 {
+  background-image: url('./Images/room3.jpg');
+}
+
+.room4 {
+  background-image: url('./Images/room4.jpg');
+}
+
+.room5 {
+  background-image: url('./Images/room5.jpg');
+}
+
+.room6 {
+  background-image: url('./Images/room6_back.jpg');
+}
+
+.room7 {
+  background-image: url('./Images/room7.jpg');
+}
+
+.win {
+  background-image: url('./Images/win.jpg');
 }
 
 /* mobile overrides */

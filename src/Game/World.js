@@ -34,6 +34,19 @@ export class World {
 
   constructor(name) {
     this.name = name
+    this.isIronDoorOpened = false
+    this.isIronKeyFound = false
+    this.isIronKeyUsed = false
+    this.isGoldenKeyFound = false
+    this.isGoldenKeyUsed = false
+    this.isGoldenDoorOpened = false
+    this.isRoom1Found = true
+    this.isRoom2Found = true
+    this.isRoom3Found = false
+    this.isRoom4Found = false
+    this.isRoom5Found = false
+    this.isRoom6Found = false
+    this.isRoom7Found = false
   }
 
   /**
