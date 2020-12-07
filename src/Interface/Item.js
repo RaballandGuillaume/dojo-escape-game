@@ -2,6 +2,10 @@ const inventoryId = 'inventory-items'
 const inventory = document.getElementById(inventoryId)
 const inventoryContainerId = 'inventory'
 const inventoryContainer = document.getElementById(inventoryContainerId)
+const noteBookModal = document.getElementById('note-book-modal')
+const closeNoteBookModal = document.getElementById('close-note-book-modal')
+const writtenNotes = document.getElementById('notes')
+const saveNotes = document.getElementById('note-book-confirm-button')
 import { Item } from '../Game/Item'
 import { World } from '../Game/World'
 
@@ -71,4 +75,29 @@ export const clearItems = (world) => {
   inventoryButton.innerHTML = 'Open Inventory'
   inventoryContainer.style.display = 'none'
   world.openInventory = false
+}
+
+
+export const closeNoteBook = (world, callback) => {
+    world.notes = writtenNotes.value
+    noteBookModal.style.display = 'none'
+    callback()
+  }
+
+export const openNoteBook = (world, callback) => {
+  noteBookModal.style.display = 'block'
+  writtenNotes.value = world.notes
+  closeNoteBookModal.onclick = () => {
+    closeNoteBook(world, callback)
+  }
+  saveNotes.onclick = () => {
+    closeNoteBook(world, callback)
+  }
+  window.onclick = (event) => {
+    if (event.target == noteBookModal) {
+      closeNoteBook(world, callback)
+    }
+  }
+  
+  return
 }

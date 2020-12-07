@@ -153,6 +153,9 @@ export const askPlayerName = (player, callback = undefined) => {
   playerName.addEventListener('keyup', pressEnterListener)
 }
 
+/**
+ * @param {Player} player - The player who won the game
+ */
 export const winGame = (player) => {
   background.classList = ['win']
   title.innerHTML = 'Congratulations !'

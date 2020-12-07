@@ -1,9 +1,9 @@
 import { World } from './Game/World'
 import { say } from './Interface/Text'
-import { addAction, clearActions, addEnabledActions } from './Interface/Action'
+import { clearActions, addEnabledActions } from './Interface/Action'
 import { askPlayerName, drawMap, winGame, restartDrawMap } from './Interface/Map'
 import { playerButton, resetButton, pauseButton, soundButton } from './Interface/Parameters'
-import { clearItems, addEnabledItems } from './Interface/Item'
+import { clearItems, addEnabledItems, openNoteBook } from './Interface/Item'
 
 // Custom JSON.parse and JSON.stringify functions to manage serializing functions in JSON data
 var JSONfn;
@@ -26,44 +26,15 @@ if (!JSONfn) {
 }());
 
 const main = () => {
-
+  
+  document.getElementById('note-book-modal').style.display = 'none' // to avoid bug ...
+  
   var world = new World({name: 'World'})
 
   // Check if data is already stored in local storage
   const jsonData = localStorage.getItem('dojoEscapeGameData')
-  
-  // Initialization of variables => variables in world
-  /*if (!jsonData) {
-    var isIronDoorOpened = false
-    var isIronKeyFound = false
-    var isIronKeyUsed = false
-    var isGoldenKeyFound = false
-    var isGoldenKeyUsed = false
-    var isGoldenDoorOpened = false
-    var isRoom3Found = false
-    var isRoom4Found = false
-    var isRoom5Found = false
-    var isRoom6Found = false
-    var isRoom7Found = false
-  }*/
-  /*
-  var room1 = world.createRoom({ 
-    name: 'Room 1', 
-    height: 2, 
-    isDiscovered: () => true
-  })
-  var room2 = world.createRoom({ 
-    name: 'Room 2', 
-    xPos: 1,
-    isDiscovered: () => true
-  })
-  var room3 = world.createRoom({
-    name: 'Room 3',
-    xPos: 1,
-    yPos: 1,
-    isDiscovered: () => isRoom3Found
-  })*/
 
+  // Create rooms for the world
   var room1 = world.createRoom({
     index: 1,
     name: 'Cell', 
@@ -111,6 +82,7 @@ const main = () => {
     isDiscovered: () => world.isRoom7Found
   })
 
+  // Create the player
   var player = world.createPlayer('Player')
 
   // Check if data is already stored in local storage
@@ -118,12 +90,14 @@ const main = () => {
     document.getElementById('ask-player-name-modal').style.display = 'none' // to avoid bug ...
     var data = JSONfn.parse(jsonData)
     player.name = data.world.player.name
+    world.notes = data.world.notes
     world.isIronDoorOpened = data.world.isIronDoorOpened
     world.isIronKeyFound = data.world.isIronKeyFound
     world.isIronKeyUsed = data.world.isIronKeyUsed
     world.isGoldenKeyFound = data.world.isGoldenKeyFound
     world.isGoldenKeyUsed = data.world.isGoldenKeyUsed
     world.isGoldenDoorOpened = data.world.isGoldenDoorOpened
+    world.isNoteBookFound = data.world.isNoteBookFound
     world.isRoom1Found = data.world.isRoom1Found
     world.isRoom2Found = data.world.isRoom2Found
     world.isRoom3Found = data.world.isRoom3Found
@@ -142,12 +116,14 @@ const main = () => {
   // Game functions
   // reset world parameters => check if this section is the same as the default world parameters
   const resetGame = () => {
+    world.notes = ''
     world.isIronDoorOpened = false
     world.isIronKeyFound = false
     world.isIronKeyUsed = false
     world.isGoldenKeyFound = false
     world.isGoldenKeyUsed = false
     world.isGoldenDoorOpened = false
+    world.isNoteBookFound = false
     world.isRoom1Found = true
     world.isRoom2Found = true
     world.isRoom3Found = false
@@ -160,6 +136,7 @@ const main = () => {
     addEnabledItems(world)
     restartDrawMap(world)
     beginningAction()
+    updateLocalData()
   }
 
   const updateLocalData = () => {
@@ -171,36 +148,24 @@ const main = () => {
   }
 
   const beginningAction = () => {
-    say(`${player.name} enters the room ...`)
+    clearActions()
     setTimeout(() => {
-      say(`... and finds an iron door on the right of the room.`)
-      clearActions()
+      say(`${player.name} enters the room ... and finds an iron door on the right of the room.`)
       addEnabledActions(world)
     }, 1000)
   }
 
   // Create actions and items
-  world.createAction({
-    text: 'Search the room with care',
-    callback: () =>
-      new Promise((resolve) => {
-        say(`${player.name} searches the room ...`)
-        setTimeout(() => {
-          say(`${player.name} found an iron key in the room`)
-          world.isIronKeyFound = true
-          updateLocalData()
-          resolve()
-        }, 3000)
-      }),
-    isEnabled: () => (
-      player.currentRoom === room1 && 
-      world.isIronKeyFound === false
-    ),
+  // inventory
+  world.createInventoryAction({
+    text: 'Close Inventory',
+    isEnabled: () => true
   })
 
+  // move actions
   world.createMoveAction(
     {
-      text: 'Move to room 1',
+      text: 'Move to the Cell', // room 1
       callback: () => 
       new Promise((resolve) => {
         updateLocalData()
@@ -216,7 +181,7 @@ const main = () => {
 
   world.createMoveAction(
     {
-      text: 'Move to room 3',
+      text: 'Move to the Vestiary', // room 3
       callback: () =>
         new Promise((resolve) => {
           setTimeout(() => {
@@ -232,6 +197,62 @@ const main = () => {
     },
     room3
   )
+
+  world.createMoveAction(
+    {
+      text: 'Move to the Corridor', // room 2
+      callback: () =>
+        new Promise((resolve) => {
+          updateLocalData()
+          resolve()
+        }),
+      isEnabled: () => (
+        (player.currentRoom === room1 &&
+          world.isIronDoorOpened) || 
+        player.currentRoom === room3
+      ),
+    },
+    room2
+  )
+
+  // actions
+  world.createAction({
+    text: 'Wake up and look around',
+    callback: () =>
+      new Promise((resolve) => {
+        say(`${player.name} looks around the room ...`)
+        setTimeout(() => {
+          say(`${player.name} found a note book in the room`)
+          world.isNoteBookFound = true
+          updateLocalData()
+          resolve()
+        }, 1000)
+      }),
+    isEnabled: () => (
+      player.currentRoom === room1 && 
+      !world.isNoteBookFound &&
+      !world.isIronKeyFound
+    ),
+  })
+
+  world.createAction({
+    text: 'Search the room with care',
+    callback: () =>
+      new Promise((resolve) => {
+        say(`${player.name} searches the room ...`)
+        setTimeout(() => {
+          say(`${player.name} found an iron key in the room`)
+          world.isIronKeyFound = true
+          updateLocalData()
+          resolve()
+        }, 3000)
+      }),
+    isEnabled: () => (
+      player.currentRoom === room1 && 
+      world.isNoteBookFound &&
+      !world.isIronKeyFound
+    ),
+  })
 
   world.createAction({
     text: 'Search again the room with care',
@@ -271,10 +292,63 @@ const main = () => {
     ),
   })
 
+  world.createAction(
+    {
+      text: 'Escape',
+      callback: () =>
+        new Promise((resolve) => {
+          say(`${player.name} escaped and won the game ! 🎉`)
+          setTimeout(() => {
+            winGame(player)
+            updateLocalData()
+            resolve()
+          }, 500)
+        }),
+      isEnabled: () => (
+        world.isGoldenKeyUsed
+      ),
+    }
+  )
+  
+  // items
+  world.createItem({
+    name: 'note book',
+    isEnabled: () => (world.isNoteBookFound),
+    isUsed: () => false,
+    callback: () => 
+      new Promise((resolve) => {
+        openNoteBook(world, updateLocalData)
+        resolve()
+      })
+  })
+
+  world.createItem({
+    name: 'iron key',
+    isEnabled: () => (world.isIronKeyFound),
+    isUsed: () => (world.isIronKeyUsed),
+    callback: () => 
+      new Promise((resolve) => {
+        say(`${player.name} used the iron key ...`)
+        setTimeout(() => {
+          if (player.currentRoom === room1) {
+            world.isIronDoorOpened = true
+            world.isIronKeyUsed = true
+            say(`${player.name} opened the iron door`)
+            clearActions()
+            addEnabledActions(world)
+          } else {
+            say(`But the key didn't work on this door ...`)
+          }
+          updateLocalData()
+          resolve()
+        }, 1000)
+      }),
+  })
+
   world.createItem({
     name: 'gold key',
     isEnabled: () => (
-      world.isGoldenKeyFound === true
+      world.isGoldenKeyFound
     ),
     isUsed: () => (
       world.isGoldenKeyUsed
@@ -297,71 +371,8 @@ const main = () => {
       }),
   })
 
-  world.createAction(
-    {
-      text: 'Escape',
-      callback: () =>
-        new Promise((resolve) => {
-          say(`${player.name} escaped and won the game ! 🎉`)
-          setTimeout(() => {
-            winGame(player)
-            updateLocalData()
-            resolve()
-          }, 500)
-        }),
-      isEnabled: () => (
-        world.isGoldenKeyUsed
-      ),
-    }
-  )
-
-  world.createMoveAction(
-    {
-      text: 'Move to room 2',
-      callback: () =>
-        new Promise((resolve) => {
-          updateLocalData()
-          resolve()
-        }),
-      isEnabled: () => (
-        (player.currentRoom === room1 &&
-          world.isIronDoorOpened) || 
-        player.currentRoom === room3
-      ),
-    },
-    room2
-  )
-
-  world.createItem({
-    name: 'iron key',
-    isEnabled: () => (world.isIronKeyFound === true),
-    isUsed: () => (world.isIronKeyUsed === true),
-    callback: () => 
-      new Promise((resolve) => {
-        say(`${player.name} used the iron key ...`)
-        setTimeout(() => {
-          if (player.currentRoom === room1) {
-            world.isIronDoorOpened = true
-            world.isIronKeyUsed = true
-            say(`${player.name} opened the iron door`)
-            clearActions()
-            addEnabledActions(world)
-          } else {
-            say(`But the key didn't work on this door ...`)
-          }
-          updateLocalData()
-          resolve()
-        }, 1000)
-      }),
-  })
-
-  world.createInventoryAction({
-    text: (world.openInventory ? 'Close' : 'Open') + ' Inventory',
-    isEnabled: () => true
-  })
-
   // Configuration of the parameters
-  playerButton.onclick = () => askPlayerName(player)
+  playerButton.onclick = () => askPlayerName(player, updateLocalData)
   resetButton.onclick = () => resetGame()
   pauseButton.onclick = () => console.log('pause')
 
@@ -375,7 +386,7 @@ const main = () => {
     addEnabledItems(world)
     drawMap(world)
   }
-  
+  updateLocalData()
 }
 
 void main()

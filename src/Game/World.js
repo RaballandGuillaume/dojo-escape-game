@@ -27,19 +27,16 @@ export class World {
    */
   items = []
 
-  /**
-   * @type {boolean}
-   */
-  openInventory = false
-
   constructor(name) {
     this.name = name
+    this.notes = ''
     this.isIronDoorOpened = false
     this.isIronKeyFound = false
     this.isIronKeyUsed = false
     this.isGoldenKeyFound = false
     this.isGoldenKeyUsed = false
     this.isGoldenDoorOpened = false
+    this.isNoteBookFound = false
     this.isRoom1Found = true
     this.isRoom2Found = true
     this.isRoom3Found = false
@@ -204,4 +201,5 @@ export class World {
     return item
   }
 }
+
 
