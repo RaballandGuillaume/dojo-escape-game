@@ -1,5 +1,6 @@
 import { Room } from './Room'
-import { drawPlayer, erasePlayer } from '../Interface/Map'
+import { drawMap, erasePlayer } from '../Interface/Map'
+import World from './World'
 import { say } from '../Interface/Text'
 
 /**
@@ -19,10 +20,11 @@ export class Player {
   /**
    * Move to another room
    * @param {Room} wantedRoom
+   * @param {World} world
    */
-  move(wantedRoom) {
+  move(wantedRoom, world) {
     erasePlayer(this)
     this.currentRoom = wantedRoom
-    drawPlayer(this)
+    drawMap(world)
   }
 }

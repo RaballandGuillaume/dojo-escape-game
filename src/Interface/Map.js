@@ -57,6 +57,13 @@ export const drawRoom = (room) => {
       room.width * scaling,
       room.height * scaling
     )
+    mapContext.strokeStyle = 'black'
+    mapContext.strokeRect(
+      room.xPos * scaling,
+      room.yPos * scaling,
+      room.width * scaling,
+      room.height * scaling
+    )
     // add the name of the room
     mapContext.font = '0.8rem Arial'
     mapContext.fillStyle = 'white'
@@ -69,7 +76,8 @@ export const drawRoom = (room) => {
  * @param {Player} player - The player to draw
  */
 export const drawPlayer = (player) => {
-  mapContext.fillStyle = 'rgb(255, 165, 0)'
+  // draw the player
+  mapContext.fillStyle = 'rgb(255, 180, 0)'
   const playerXPos =
     (player.currentRoom.xPos + player.currentRoom.width / 2) * scaling
   const playerYPos =
@@ -84,6 +92,7 @@ export const drawPlayer = (player) => {
     true
   )
   mapContext.fill()
+  // draw the name of the player
   mapContext.fillStyle = 'white'
   mapContext.textAlign = 'center'
   mapContext.font = '0.8rem Arial'
@@ -105,6 +114,15 @@ export const erasePlayer = (player) => {
 export const drawMap = (world) => {
   world.rooms.forEach(drawRoom)
   drawPlayer(world.player)
+  if (world.isRedGuardInRoom2()) {
+    drawGuard(world.rooms[1], 'red')
+  }
+  if (world.isRedGuardInRoom3()) {
+    drawGuard(world.rooms[2], 'red')
+  }
+  if (world.isBlueGuardInRoom2()) {
+    drawGuard(world.rooms[1], 'blue')
+  }
 }
 
 /**
@@ -169,4 +187,53 @@ export const winGame = (player) => {
 export const restartDrawMap = (world) => {
   mapCanvas.classList = ['original-map']
   drawMap(world)
+}
+
+/**
+ * Draw guard in the room with the corresponding color.
+ * @param {Room} room - The room where to draw the guard.
+ * @param {string} color - the color of the guard to draw.
+ */
+export const drawGuard = (room, color) => {
+  mapContext.fillStyle = color
+  var guardXPos = room.xPos * scaling
+  if (color === 'blue') {
+    guardXPos = room.xPos * scaling + playerSize * scaling + 3
+  }
+  else if (color === 'red') {
+    guardXPos = room.xPos * scaling + room.width * scaling - playerSize * scaling - 3
+  }
+  const guardYPos =
+    (room.yPos + room.height * 4 / 5) * scaling
+  mapContext.beginPath()
+  mapContext.arc(
+    guardXPos,
+    guardYPos,
+    playerSize * scaling,
+    0,
+    Math.PI * 2,
+    true
+  )
+  mapContext.fill()
+}
+
+/**
+ * Draw door in the room with the corresponding color.
+ * @param {Room} room - The room where to draw the guard.
+ * @param {string} color - the color of the guard to draw.
+ */
+export const drawDoor = (room, color, side) => {
+  mapContext.fillStyle = color
+  var doorXPos, doorYPos, doorWidth, doorHeight
+  switch (side) {
+    case 'left':
+      doorXPos = room.xPos
+  }
+  mapContext.fillStyle = 'black'
+  mapContext.fillRect(
+    doorXPos * scaling,
+    doorYPos * scaling,
+    doorWidth * scaling,
+    doorHeight * scaling
+  )
 }

@@ -1,7 +1,7 @@
 import { World } from './Game/World'
 import { say } from './Interface/Text'
 import { clearActions, addEnabledActions } from './Interface/Action'
-import { askPlayerName, drawMap, winGame, restartDrawMap } from './Interface/Map'
+import { askPlayerName, drawMap, winGame, restartDrawMap, drawGuard, drawRoom } from './Interface/Map'
 import { playerButton, resetButton, pauseButton, soundButton } from './Interface/Parameters'
 import { clearItems, addEnabledItems, openNoteBook } from './Interface/Item'
 
@@ -101,6 +101,7 @@ const main = () => {
     world.isLetterFound = data.world.isLetterFound
     world.isLetterUsed = data.world.isLetterUsed
     world.isSilverCoinFound = data.world.isSilverCoinFound
+    world.isSilverCoinUsed = data.world.isSilverCoinUsed
     world.isBronzeKeyFound = data.world.isBronzeKeyFound
     world.isBronzeDoorFound = data.world.isBronzeDoorFound
     world.isBronzeDoorOpened = data.world.isBronzeDoorOpened
@@ -133,9 +134,28 @@ const main = () => {
     world.isRoom5Found = data.world.isRoom5Found
     world.isRoom6Found = data.world.isRoom6Found
     world.isRoom7Found = data.world.isRoom7Found
+    world.isRedGuardInRoom2 = () => (
+      (player.currentRoom === world.rooms[1] &&
+      world.guards.vestiary.chat >= 0 && 
+      world.lookedOnTheLeft &&
+      world.guards.vestiary.chat !== 2) ||
+      (player.currentRoom === world.rooms[1] &&
+        world.isBronzeKeyFound &&
+        world.guards.vestiary.chat === 2)
+    )
+    world.isRedGuardInRoom3 = () => (
+      player.currentRoom === world.rooms[2] &&
+      world.guards.vestiary.sport === 0 &&
+      world.guards.vestiary.chat === 2
+    )
+    world.isBlueGuardInRoom2 = () => (
+      player.currentRoom === world.rooms[1] &&
+      world.lookedOnTheRight &&
+      world.guards.library.chat >= 0
+    )
     world.rooms.forEach((room) => {
       if (room.name === data.world.player.currentRoom.name){
-        player.move(room)
+        player.move(room, world)
         return
       }
     })
@@ -157,6 +177,7 @@ const main = () => {
     world.lookedOnTheLeft = false
     world.lookedOnTheRight = false
     world.isSilverCoinFound = false
+    world.isSilverCoinUsed = false
     world.isBronzeKeyFound = false
     world.isBronzeDoorFound = false
     world.isBronzeDoorOpened = false
@@ -204,7 +225,7 @@ const main = () => {
     world.isRoom5Found = false
     world.isRoom6Found = false
     world.isRoom7Found = false
-    player.move(room1)
+    player.move(room1, world)
     clearItems(world)
     addEnabledItems(world)
     restartDrawMap(world)
@@ -225,13 +246,14 @@ const main = () => {
     setTimeout(() => {
       say(`${player.name} wakes up in the cell ...`)
       addEnabledActions(world)
+      clearItems(world)
     }, 1000)
   }
 
   // Create actions and items
   // inventory
   world.createInventoryAction({
-    text: 'Close Inventory',
+    text: 'Open Inventory',
     isEnabled: () => true
   })
 
@@ -283,12 +305,12 @@ const main = () => {
             say(`${player.name} sees a lot of stuffs in the boxes`)
             updateLocalData()
             resolve()
-          }, 1000)
+          }, 500)
         }),
       isEnabled: () => (
         (player.currentRoom === room2 && 
         room3.isDiscovered() && 
-        world.guards.vestiary.chat > 0) ||
+        world.guards.vestiary.chat !== 0) ||
         player.currentRoom === room4
       ),
     },
@@ -322,13 +344,13 @@ const main = () => {
             say(`This kitchen is really messy ...`)
             updateLocalData()
             resolve()
-          }, 1500)
+          }, 500)
         }),
       isEnabled: () => (
-        player.currentRoom === room2 && 
+        (player.currentRoom === room2 && 
         room5.isDiscovered() &&
-        world.guards.vestiary.chat > 1 &&
-        world.isBronzeKeyUsed
+        world.isBronzeDoorOpened) ||
+        player.currentRoom === room7
       ),
     },
     room5
@@ -346,12 +368,8 @@ const main = () => {
       isEnabled: () => (
         player.currentRoom === room2 && 
         room6.isDiscovered() &&
-        world.guards.library.cake > 1 &&
-        world.guards.vestiary.burger > 0 &&
-        world.guards.vestiary.pasta > 0 &&
-        world.guards.vestiary.sport > 0 &&
         world.guards.library.chat === -1 &&
-        world.isPostItFound
+        world.guards.vestiary.chat === -1
       ),
     },
     room6
@@ -370,12 +388,12 @@ const main = () => {
           }, 1200)
         }),
       isEnabled: () => (
-        player.currentRoom === room6 && 
+        player.currentRoom === room5 && 
         room7.isDiscovered() && 
         world.isSecurityCardFound
       ),
     },
-    room3
+    room7
   )
 
   // actions
@@ -480,52 +498,56 @@ const main = () => {
       new Promise((resolve) => {
         say(`${player.name} searches the room ...`)
         setTimeout(() => {
-          say(`${player.name} found silver coins under the furniture !`)
-          world.isSilverCoinFound = true
+          say(`${player.name} found a gold coin under the furniture !`)
+          world.isGoldCoinFound = true
           updateLocalData()
           resolve()
         }, 3000)
       }),
     isEnabled: () => (
       player.currentRoom === room1 &&
-      world.isRoom4Found
+      world.isRoom4Found &&
+      !world.isGoldCoinFound
     ),
   })
 
   // actions in room 2
   world.createAction({
-    text: 'Look on the left of the corridor',
+    text: 'Look on one side of the corridor',
     callback: () =>
       new Promise((resolve) => {
         say(`${player.name} looks on the left ...`)
         setTimeout(() => {
-          say(`${player.name} saw a guard in front of a door`)
+          say(`${player.name} saw a red guard in front of a door`)
           world.lookedOnTheLeft = true
+          drawGuard(room2, 'red')
           updateLocalData()
           resolve()
         }, 1000)
       }),
     isEnabled: () => (
       player.currentRoom === room2 &&
-      world.guards.vestiary.chat === 0
+      !world.lookedOnTheLeft
     ),
   })
 
   world.createAction({
-    text: 'Look on the right of the corridor',
+    text: 'Look on the other side of the corridor',
     callback: () =>
       new Promise((resolve) => {
         say(`${player.name} looks on the right ...`)
         setTimeout(() => {
-          say(`${player.name} saw a guard in front of a door`)
+          say(`${player.name} saw a blue guard in front of a door`)
           world.lookedOnTheRight = true
+          drawGuard(room2, 'blue')
           updateLocalData()
           resolve()
         }, 1000)
       }),
     isEnabled: () => (
       player.currentRoom === room2 &&
-      world.guards.library.chat === 0
+      world.lookedOnTheLeft &&
+      !world.lookedOnTheRight
     ),
   })
 
@@ -549,7 +571,7 @@ const main = () => {
   })
 
   world.createAction({
-    text: 'Chat with the guard on the left',
+    text: 'Chat with the red guard',
     callback: () =>
       new Promise((resolve) => {
         say(`${player.name} talks with the guard on the left ...`)
@@ -563,30 +585,38 @@ const main = () => {
               break
             case 1:
               if (world.isBronzeDoorFound) {
-                say(`Guard : Hello again ${player.name}, ahah do you want to open the strong door ? You can't, because I have the key and I won't give it to you :)`)
+                say(`Guard : Hello again ${player.name}, ahah do you want to open the strong door ? You can't, because I have the key and I won't give it to you ... (the guard moves to the vestiary)`)
                 world.guards.vestiary.chat = 2
+                drawMap(world)
               }
               else {
                 say(`Guard : Hello again ${player.name}, you can explore the corridor as you want.`)
               }
               break
             case 2:
-              if (world.cookedMeals.burger === 0) {
-                say(`Guard : Hi my friend, I'm hungry, don't you ?`)
+              if (world.cookedMeals.pasta === 0) {
+                say(`Guard : Hi my friend, I'm hungry, don't you ? I feel like eating pastas ...`)
               }
               else {
-                say(`Guard : Hi my friend, do you really have some cooked some burgers ?? Can you give me one please ?`)
-                world.cookedMeals.burger --
-                world.guards.vestiary.burger ++
+                say(`Guard : Hi my friend, do you really have cooked some pasta ?? Thank you for this plate ! (${player.name} gave a plate of pasta to the guard)`)
+                world.cookedMeals.pasta --
+                world.guards.vestiary.pasta ++
                 world.guards.vestiary.chat = 3
               }
               break
             case 3:
-              say(`Guard : Thank you for the burger !`)
-              world.guards.vestiary.chat = 4
+              if (world.cookedMeals.burger === 0) {
+                say(`Guard : I would like to eat a burger ...`)
+              }
+              else {
+                say(`Guard : Hi my friend, do you really have cooked some burgers ?? Thank you for this burger ! (${player.name} gave a burger to the guard)`)
+                world.cookedMeals.burger --
+                world.guards.vestiary.burger ++
+                world.guards.vestiary.chat = 4
+              }
               break
             case 4:
-              say(`Guard : I think you should talk with other guards now ...`)
+              say(`Guard : Thank you for the burger !`)
               world.guards.vestiary.chat ++
               break
             case 5:
@@ -594,8 +624,9 @@ const main = () => {
               world.guards.vestiary.chat ++
               break
             case 6:
-              say(`Guard : Stop talking to me.`)
+              say(`Guard : Stop talking to me. (the guard left)`)
               world.guards.vestiary.chat = -1
+              drawMap(world)
               break
             default:
               say(`Guard : Come later, I'm busy.`)
@@ -605,30 +636,37 @@ const main = () => {
         }, 1000)
       }),
     isEnabled: () => (
-      player.currentRoom === room2 &&
+      (player.currentRoom === room2 &&
       world.guards.vestiary.chat >= 0 && 
-      world.lookedOnTheLeft
+      world.lookedOnTheLeft &&
+      world.guards.vestiary.chat !== 2) ||
+      (player.currentRoom === room2 &&
+        world.isBronzeKeyFound &&
+        world.guards.vestiary.chat === 2)
     ),
   })
 
   world.createAction({
-    text: 'Chat with the guard on the right',
+    text: 'Chat with the blue guard',
     callback: () =>
       new Promise((resolve) => {
-        say(`${player.name} talks with the guard on the right ...`)
+        say(`${player.name} talks with the blue guard ...`)
         setTimeout(() => {
           switch (world.guards.library.chat) {
             case 0:
               say(`Guard : Hello ${player.name}, you're not allowed to go to the library.`)
               world.isRoom6Found = true
               world.guards.library.chat = 1
+              drawMap(world)
               break
             case 1:
               if (world.cookedMeals.burger > 0 && world.cookedMeals.cake === 0) {
-                say(`Guard : Hello again ${player.name}, oh thanks for this burger, I see that you are a good cooker, but do you know how to cook a cake ?`)
+                say(`(${player.name} gave a burger to the guard) Guard : Oh thanks for this burger, I see that you are a good cooker, but do you know how to cook a cake ?`)
+                world.cookedMeals.burger --
+                world.guards.library.burger ++
               }
-              if (world.cookedMeals.cake > 0) {
-                say(`Guard : Hello again ${player.name}, indeed you know how to cook a cake. Can you give me this cake ?`)
+              else if (world.cookedMeals.cake > 0) {
+                say(`Guard : Hello again ${player.name}, indeed you know how to cook a cake. Can you give me this cake ? (${player.name} gave a cake to the guard)`)
                 world.guards.library.chat = 2
                 world.cookedMeals.cake --
                 world.guards.library.cake ++
@@ -639,10 +677,10 @@ const main = () => {
               break
             case 2:
               if (world.cookedMeals.cake === 0) {
-                say(`Guard : I would like to have another cake like the other.`)
+                say(`Guard : I would like to eat another cake ...`)
               }
               if (world.cookedMeals.cake > 0) {
-                say(`Guard : Yes give me this cake please, I loved the first one !`)
+                say(`Guard : Yes give me this cake please, I loved the first one ! (${player.name} gave another cake to the guard)`)
                 world.guards.library.chat = 3
                 world.cookedMeals.cake --
                 world.guards.library.cake ++
@@ -652,8 +690,9 @@ const main = () => {
               say(`Guard : Thanks for the food ! But It won't be enough to let you go in the library ahah ...`) // give a silver coin to pass
               break
             case 4:
-              say(`Guard : Ok, I will leave and let you enter the library ... The guard leaves the corridor.`)
+              say(`Guard : Ok, I will leave and let you enter the library ... (The guard leaves the corridor)`)
               world.guards.library.chat = -1
+              drawMap(world)
               break
             default:
               say(`Guard : Come later, I'm busy.`)
@@ -665,30 +704,47 @@ const main = () => {
     isEnabled: () => (
       player.currentRoom === room2 &&
       world.guards.vestiary.chat !== 0 &&
-      world.lookedOntheRight &&
+      world.lookedOnTheRight &&
       world.guards.library.chat >= 0
+    ),
+  })
+
+  world.createAction({
+    text: 'Move to Library',
+    callback: () =>
+      new Promise((resolve) => {
+        setTimeout(() => {
+          say(`A guard prevents ${player.name} from entering the library ... It would be better to wait until all the guards leave the Corridor !`)
+          resolve()
+        }, 500)
+      }),
+    isEnabled: () => (
+      player.currentRoom === room2 &&
+      (world.guards.library.chat > 0 || 
+        (world.guards.library.chat === -1 &&
+        world.guards.vestiary.chat !== -1))
     ),
   })
 
   // actions in room 3
   world.createAction({
-    text: 'Chat with the guard here',
+    text: 'Chat with the red guard who is here',
     callback: () =>
       new Promise((resolve) => {
-        say(`Guard : Yes, I followed you to be sure you were not trying to steal coins in these boxes ...`)
+        say(`Guard : Why did you follow me ?`)
         setTimeout(() => {
-          say(`Guard : Don't steal, please, I'll go running outdoor. However, you can use the restrooms of this vestiary.`)
+          say(`Guard : Don't steal, please, I'll go running outdoor. However, you can use the restrooms of this vestiary as you want. (the red guard left the vestiary)`)
           world.guards.vestiary.sport = 1
           world.isRoom4Found = true
           drawMap(world)
           updateLocalData()
           resolve()
-        }, 6000)
+        }, 2000)
       }),
     isEnabled: () => (
       player.currentRoom === room3 &&
       world.guards.vestiary.sport === 0 &&
-      world.guards.vestiary.chat >= 2
+      world.guards.vestiary.chat === 2
     ),
   })
 
@@ -706,7 +762,8 @@ const main = () => {
       }),
     isEnabled: () => (
       player.currentRoom === room3 &&
-      world.guards.vestiary.sport > 0
+      world.guards.vestiary.sport > 0 &&
+      !world.isSilverCoinFound
     ),
   })
 
@@ -717,7 +774,7 @@ const main = () => {
       new Promise((resolve) => {
         say(`${player.name} searches ...`)
         setTimeout(() => {
-          if (world.isBronzeDoorFound && !world.isBronzeKeyFound) {
+          if (world.isBronzeDoorFound) {
             say(`${player.name} found the bronze key of the guard on the floor`)
             world.isBronzeKeyFound = true
           }
@@ -731,37 +788,35 @@ const main = () => {
     isEnabled: () => (
       player.currentRoom === room4 &&
       world.guards.vestiary.sport > 0 &&
-      world.guards.vestiary.chat >= 2 &&
+      world.guards.vestiary.chat === 2 &&
       !world.isBronzeKeyFound
+    ),
+  })
+
+  world.createAction({
+    text: 'Use toilets',
+    callback: () =>
+      new Promise((resolve) => {
+        say(`${player.name} uses the toilets ...`)
+        setTimeout(() => {
+            say(`You don't need to know what ${player.name} did ...`)
+          resolve()
+        }, 2000)
+      }),
+    isEnabled: () => (
+      player.currentRoom === room4
     ),
   })
 
   // actions in room 5
   world.createAction({
-    text: 'Cook something',
+    text: 'Cook pastas',
     callback: () =>
       new Promise((resolve) => {
         say(`${player.name} cooks something tasty ...`)
         setTimeout(() => {
-          if (!world.isCookingBookUsed) {
-            say(`${player.name} cooked pasta`)
+            say(`${player.name} cooked a plate of pastas`)
             world.cookedMeals.pasta ++
-          }
-          if (world.isCookingBookUsed) {
-            const random = Math.floor(Math.random()*5)
-            if (random <= 1) {
-              say(`${player.name} cooked pasta`)
-              world.cookedMeals.pasta ++
-            }
-            else if (random <= 3) {
-              say(`${player.name} cooked a burger`)
-              world.cookedMeals.burger ++
-            }
-            else {
-              say(`${player.name} cooked a cake`)
-              world.cookedMeals.cake ++
-            }
-          }
           updateLocalData()
           resolve()
         }, 2000)
@@ -772,14 +827,49 @@ const main = () => {
   })
 
   world.createAction({
-    text: 'Cook something special',
+    text: 'Cook a burger',
+    callback: () =>
+      new Promise((resolve) => {
+        say(`${player.name} cooks something tasty ...`)
+        setTimeout(() => {
+            say(`${player.name} cooked a burger`)
+            world.cookedMeals.burger ++
+          updateLocalData()
+          resolve()
+        }, 2000)
+      }),
+    isEnabled: () => (
+      player.currentRoom === room5 &&
+      world.isCookingBookUsed
+    ),
+  })
+
+  world.createAction({
+    text: 'Cook a cake',
+    callback: () =>
+      new Promise((resolve) => {
+        say(`${player.name} cooks something tasty ...`)
+        setTimeout(() => {
+            say(`${player.name} cooked a cake`)
+            world.cookedMeals.cake ++
+          updateLocalData()
+          resolve()
+        }, 2000)
+      }),
+    isEnabled: () => (
+      player.currentRoom === room5 &&
+      world.isCookingBookUsed
+    ),
+  })
+
+  world.createAction({
+    text: 'Cook the traditional meal',
     callback: () =>
       new Promise((resolve) => {
         say(`${player.name} cooks an awsome traditional meal thanks to the book found in the library ...`)
         setTimeout(() => {
           say(`${player.name} cooked the special meal.`)
-          world.cookedMeals.specialMeal ++
-          world.isSpecialCookingBookUsed = true
+          world.cookedMeals.specialMeal = 1
           updateLocalData()
           resolve()
         }, 3000)
@@ -801,11 +891,11 @@ const main = () => {
             say(`${player.name} found a cooking book`)
             world.isCookingBookFound = true
           }
-          if (world.isCookingBookFound && !world.isPostItFound) {
+          else if (!world.isPostItFound) {
             say(`${player.name} found a post-it with a reference to a special cooking book`)
             world.isPostItFound = true
           }
-          if (world.isCookingBookFound && world.isPostItFound && !world.isSmallBoxFound) {
+          else if (!world.isSmallBoxFound) {
             say(`${player.name} found a small box locked with a code`)
             world.isSmallBoxFound = true
           }
@@ -829,7 +919,7 @@ const main = () => {
         setTimeout(() => {
           say(`${player.name} found a backdoor in this room`)
           world.isRoom7Found = true
-          world.isBackDoorFound
+          world.isBackDoorFound = true
           drawMap(world)
           updateLocalData()
           resolve()
@@ -847,14 +937,15 @@ const main = () => {
       new Promise((resolve) => {
         say(`${player.name} tries to open the door ...`)
         setTimeout(() => {
-          say(`But the door is locked and needs a security card to be opened.`)
+          say(`But the door is locked and a security card is required to open it.`)
           updateLocalData()
           resolve()
         }, 2000)
       }),
     isEnabled: () => (
       player.currentRoom === room5 &&
-      world.isBackDoorFound
+      world.isBackDoorFound &&
+      !world.isSecurityCardFound
     ),
   })
 
@@ -865,7 +956,7 @@ const main = () => {
       new Promise((resolve) => {
         say(`${player.name} chooses a book to read in the library ...`)
         setTimeout(() => {
-          if (world.booksRead < 10 || world.cookedMeals.specialMeal !== -1) {
+          if (world.booksRead < 2) {
             say(`${player.name} read a book`)
             world.booksRead ++
           }
@@ -878,7 +969,8 @@ const main = () => {
         }, 1500)
       }),
     isEnabled: () => (
-      player.currentRoom === room6
+      player.currentRoom === room6 &&
+      !world.isTrappedDoorFound
     ),
   })
 
@@ -888,14 +980,16 @@ const main = () => {
       new Promise((resolve) => {
         say(`${player.name} searches the book in the library ...`)
         setTimeout(() => {
-          say(`${player.name} found the book !`)
+          say(`${player.name} found the book (referenced in the post-it note) !`)
           world.isSpecialCookingBookFound = true
+          world.isPostItUsed = true
           updateLocalData()
           resolve()
         }, 2500)
       }),
     isEnabled: () => (
       player.currentRoom === room6 &&
+      world.isPostItFound &&
       !world.isSpecialCookingBookFound
     ),
   })
@@ -904,16 +998,18 @@ const main = () => {
     text: 'Look around and search the room with care',
     callback: () =>
       new Promise((resolve) => {
-        say(`${player.name} chooses a book to read in the library ...`)
+        say(`${player.name} searches interresting things in the library ...`)
         setTimeout(() => {
           if (!world.isCodeLockerFound) {
             say(`${player.name} found a box locked with a code.`)
             world.isCodeLockerFound = true
           }
           else {
-            if (world.booksRead < 10) {
-              say(`${player.name} found nothing else that seemed interresting ... you should read a book to console yourself :)`)
-              world.booksRead ++
+            if (world.booksRead < 1) {
+              say(`${player.name} found nothing else that seemed interresting ... ${player.name} should read a book to console yourself :)`)
+            }
+            else if (world.booksRead < 2) {
+              say(`${player.name} found nothing ... ${player.name} SHOULD REALLY READ A BOOK ! ^^`)
             }
             else {
               say(`${player.name} found an old picture of the guards between the books.`)
@@ -934,24 +1030,26 @@ const main = () => {
     text: 'Explore the small room behing the trapped door',
     callback: () =>
       new Promise((resolve) => {
+        const background = document.getElementById('background')
+        background.classList.add('trapped-door')
         say(`${player.name} goes through the trapped door to see what's in this tiny secret room ...`)
         setTimeout(() => {
           say(`${player.name} sees some strange paintings on the walls ...`)
-        }, 2000)
+        }, 3000)
         setTimeout(() => {
           say(`${player.name} sees strange objects : old pistols and old maps in the furniture ...`)
-        }, 4000)
+        }, 8000)
         setTimeout(() => {
           say(`${player.name} found a gold coin in a drawer !`)
           world.isGoldCoinFound = true
           updateLocalData()
+          background.classList.remove('trapped-door')
           resolve()
-        }, 6000)
+        }, 12000)
       }),
     isEnabled: () => (
       player.currentRoom === room6 &&
-      world.isTrappedDoorFound &&
-      !world.isGoldCoinFound
+      world.isTrappedDoorFound
     ),
   })
 
@@ -962,8 +1060,8 @@ const main = () => {
       new Promise((resolve) => {
         say(`${player.name} looks around ...`)
         setTimeout(() => {
-            say(`${player.name} saw a golden portal behind the guard.`)
-            world.isGoldenDoorFound
+            say(`${player.name} saw a portal behind the guard.`)
+            world.isGoldenDoorFound = true
           updateLocalData()
           resolve()
         }, 1000)
@@ -986,63 +1084,29 @@ const main = () => {
               world.guards.outdoor.chat = 1
               break
             case 1:
-              if (world.guards.outdoor.specialMeal !== -1 && world.guards.outdoor.goldCoins !== -1) {
+              if (world.guards.outdoor.specialMeal === 0 && world.guards.outdoor.goldCoins === 0) {
                 say(`Guard : What are you doing ? Don't try to escape yourself ! You're not supposed to be here !`)
               }
+              else if (world.guards.outdoor.specialMeal === 1 && world.guards.outdoor.goldCoins === 0) {
+                say(`Guard : I must admit that this traditional meal is tasty, but it won't be enough ...`)
+              } 
+              else if (world.guards.outdoor.specialMeal === 0 && world.guards.outdoor.goldCoins === 1) {
+                say(`Guard : I must admit that this gold coin has value, but it won't be enough ...`)
+              }
               else {
-                say(`Guard : I must admit that this traditional meal and overall this gold coin have value ... Ok for this time I will let you go out ... Take this golden key !`)
+                say(`${player.name} managed to corrupt the guard and obtained a big key ! (the guard left)`)
                 world.isGoldenKeyFound = true
               }
           }
           updateLocalData()
           resolve()
-        }, 1000)
+        }, 1500)
       }),
     isEnabled: () => (
       player.currentRoom === room7 &&
       !world.isGoldenKeyFound
     ),
   })
-
-  /*world.createAction({
-    text: 'Try to corrupt the guard with the traditional meal',
-    callback: () =>
-      new Promise((resolve) => {
-        say(`${player.name} gives the awsome traditional meal cooked in the Kitchen to the guard outdoor ...`)
-        setTimeout(() => {
-          say(`Guard : Hum, ok this is absolutely delicious, but don't try to corrupt myself with food, I'm not that easy to corrupt !`)
-          world.cookedMeals.specialMeal = -1
-          world.guards.outdoor.specialMeal = 1
-          updateLocalData()
-          resolve()
-        }, 2000)
-      }),
-    isEnabled: () => (
-      player.currentRoom === room7 &&
-      world.cookedMeals.specialMeal === 1 &&
-      world.guards.outdoor.specialMeal === 0
-    ),
-  })
-
-  world.createAction({
-    text: 'Try to corrupt the guard with the gold coin',
-    callback: () =>
-      new Promise((resolve) => {
-        say(`${player.name} gives the gold coin to the guard outdoor ...`)
-        setTimeout(() => {
-          say(`Guard : Hum, ok this is absolutely delicious, but don't try to corrupt myself with food, I'm not that easy to corrupt !`)
-          world.cookedMeals.specialMeal = -1
-          world.guards.outdoor.specialMeal = 1
-          updateLocalData()
-          resolve()
-        }, 2000)
-      }),
-    isEnabled: () => (
-      player.currentRoom === room7 &&
-      world.isGoldCoinFound &&
-      world.guards.outdoor.goldCoins === 0
-    ),
-  })*/
 
   // action to win the game
   world.createAction(
@@ -1102,7 +1166,6 @@ const main = () => {
       }),
   })
 
-  // items
   world.createItem({
     name: 'letter',
     isEnabled: () => world.isLetterFound,
@@ -1123,9 +1186,10 @@ const main = () => {
       new Promise((resolve) => {
         setTimeout(() => {
           if (player.currentRoom === room2 && world.guards.library.chat === 3 && world.guards.library.silverCoins === 0) {
-            say(`${player.name} gives several silver coins to the guard on the right (in front of the Library).`)
+            say(`${player.name} gives several silver coins to the blue guard (in front of the Library).`)
             world.guards.library.silverCoins = 1
             world.guards.library.chat = 4
+            world.isSilverCoinUsed = true
             clearActions()
             addEnabledActions(world)
             updateLocalData()
@@ -1186,9 +1250,11 @@ const main = () => {
     isUsed: () => (world.isEnigmaUsed),
     callback: () => 
       new Promise((resolve) => {
-        say(`${player.name} reads the enigma ...`)
-        alert('enigma gives the code 5678')
-        resolve()
+        setTimeout(() => {
+          say(`${player.name} reads the enigma ...`)
+          alert('enigma gives the code 5678')
+          resolve()
+        }, 500)
       }),
   })
 
@@ -1200,9 +1266,15 @@ const main = () => {
       new Promise((resolve) => {
         say(`${player.name} reads the cooking book ...`)
         setTimeout(() => {
+          if (player.currentRoom === room5) {
             say(`${player.name} learnt how to cook burgers and cakes !`)
             world.isCookingBookUsed = true
+            clearActions()
+            addEnabledActions(world)
             updateLocalData()
+          } else {
+            say(`This is a cooking book with common recipes.`)
+          }
           resolve()
         }, 500)
       }),
@@ -1225,7 +1297,7 @@ const main = () => {
     isUsed: () => (world.cookedMeals.pasta === -1),
     callback: () => 
       new Promise((resolve) => {
-        say(`${player.name} has ${world.cookedMeals.pasta} plates of pasta !`)
+        say(`${player.name} has ${world.cookedMeals.pasta} plate(s) of pasta !`)
         resolve()
       }),
   })
@@ -1236,7 +1308,7 @@ const main = () => {
     isUsed: () => (world.cookedMeals.burger === -1),
     callback: () => 
       new Promise((resolve) => {
-        say(`${player.name} has ${world.cookedMeals.burger} burgers ready to eat !`)
+        say(`${player.name} has ${world.cookedMeals.burger} burger(s) ready to eat !`)
         resolve()
       }),
   })
@@ -1247,7 +1319,7 @@ const main = () => {
     isUsed: () => (world.cookedMeals.cake === -1),
     callback: () => 
       new Promise((resolve) => {
-        say(`${player.name} has ${world.cookedMeals.cake} cakes hot and smelling good !`)
+        say(`${player.name} has ${world.cookedMeals.cake} cake(s) hot and smelling good !`)
         resolve()
       }),
   })
@@ -1270,10 +1342,10 @@ const main = () => {
             addEnabledActions(world)
             updateLocalData()
             resolve()
-          }, 1000)
+          }, 3000)
         }
         else {
-          say(`${player.name} has cooked an awsome traditional meal that looks really tasty !`)
+          say(`${player.name} has cooked an awsome traditional meal that looks really tasty ! (it can be offered to someone ...)`)
         }
         resolve()
       }),
@@ -1288,12 +1360,13 @@ const main = () => {
         if (player.currentRoom === room5) {
           say(`${player.name} learnt how to cook the traditional meal !`)
           world.isSpecialCookingBookUsed = true
+          clearActions()
+          addEnabledActions(world)
           updateLocalData()
         }
         else {
           say(`${player.name} needs to be in the Kitchen to learn cooking ...`)
         }
-        
         resolve()
       }),
   })
@@ -1306,7 +1379,33 @@ const main = () => {
       new Promise((resolve) => {
         say(`${player.name} tries a code ...`)
         alert('modal to ask the code 5678 to the player')
+        say(`${player.name} found a security card inside the code locker !`)
+        world.isEnigmaUsed = true
+        world.isCodeLockerUsed = true
+        world.isSecurityCardFound = true
         updateLocalData()
+        resolve()
+      }),
+  })
+
+  world.createItem({
+    name: 'security card',
+    isEnabled: () => (world.isSecurityCardFound),
+    isUsed: () => (player.currentRoom === room7),
+    callback: () => 
+      new Promise((resolve) => {
+        say(`This security card may be very useful to escape this labyrinth !`)
+        resolve()
+      }),
+  })
+
+  world.createItem({
+    name: 'photo',
+    isEnabled: () => (world.isPictureFound),
+    isUsed: () => (false),
+    callback: () => 
+      new Promise((resolve) => {
+        say(`This photo is useless ... but at least it's funny !`)
         resolve()
       }),
   })
@@ -1320,14 +1419,16 @@ const main = () => {
           world.guards.outdoor.goldCoins === 0) {
           say(`${player.name} gives the gold coin to the guard outdoor ...`)
           setTimeout(() => {
-            say(`Guard : Hum, ok this is absolutely delicious, but don't try to corrupt myself with food, I'm not that easy to corrupt !`)
-            world.cookedMeals.specialMeal = -1
-            world.guards.outdoor.specialMeal = 1
+            say(`Guard : Ah this coin is made of pure gold ! Thank you for the gift ... we can negociate now ...`)
+            world.isGoldCoinUsed = true
+            world.guards.outdoor.goldCoins = 1
             clearActions()
             addEnabledActions(world)
             updateLocalData()
             resolve()
-          }, 1000)
+          }, 2000)
+        } else {
+          say(`${player.name} thinks that this coin should be very useful ...`)
         }
       }),
     isEnabled: () => world.isGoldCoinFound,
@@ -1340,10 +1441,10 @@ const main = () => {
     isUsed: () => world.isGoldenKeyUsed,
     callback: () => 
       new Promise((resolve) => {
-        say(`${player.name} used the gold key ...`)
+        say(`${player.name} tries to use the gold key ...`)
         setTimeout(() => {
           if (player.currentRoom === room7) {
-            say(`${player.name} opened a portal outdoor and found the exit !`)
+            say(`${player.name} opened the golden portal outdoor and found the exit !`)
             world.isGoldenKeyUsed = true
             clearActions()
             addEnabledActions(world)
@@ -1352,7 +1453,7 @@ const main = () => {
             say(`But the key was useless in this room ...`)
           }
           resolve()
-        }, 1000)
+        }, 1500)
       }),
   })
 

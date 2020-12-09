@@ -39,9 +39,10 @@ export class World {
     this.isNoteBookFound = false
     this.isLetterFound = false
     this.isLetterUsed = false
-    this.lookedOntheLeft = false
-    this.lookedOntheRight = false
+    this.lookedOnTheLeft = false
+    this.lookedOnTheRight = false
     this.isSilverCoinFound = false
+    this.isSilverCoinUsed = false
     this.isBronzeKeyFound = false
     this.isBronzeDoorFound = false
     this.isBronzeDoorOpened = false
@@ -55,7 +56,8 @@ export class World {
       vestiary: {
         chat: 0, 
         sport: 0, 
-        pasta: 0
+        pasta: 0,
+        burger: 0
       }, 
       library: {
         chat: 0, 
@@ -93,6 +95,26 @@ export class World {
     this.isRoom5Found = false
     this.isRoom6Found = false
     this.isRoom7Found = false
+    this.openInventory = false
+    this.isRedGuardInRoom2 = () => (
+      (this.player.currentRoom === this.rooms[1] &&
+      this.guards.vestiary.chat >= 0 && 
+      this.lookedOnTheLeft &&
+      this.guards.vestiary.chat !== 2) ||
+      (this.player.currentRoom === this.rooms[1] &&
+        this.isBronzeKeyFound &&
+        this.guards.vestiary.chat === 2)
+    )
+    this.isRedGuardInRoom3 = () => (
+      this.player.currentRoom === this.rooms[2] &&
+      this.guards.vestiary.sport === 0 &&
+      this.guards.vestiary.chat === 2
+    )
+    this.isBlueGuardInRoom2 = () => (
+      this.player.currentRoom === this.rooms[1] &&
+      this.lookedOnTheRight &&
+      this.guards.library.chat >= 0
+    )
   }
 
   /**

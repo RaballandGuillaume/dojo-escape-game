@@ -256,7 +256,7 @@ body {
   background-color: #664400cc;
   border-radius: 2rem;
   padding: 0.4rem 1rem;
-  display: block;
+  display: none;
 }
 
 #inventory-title {
@@ -356,6 +356,10 @@ body {
 
 .win {
   background-image: url('./images/win.jpg');
+}
+
+.trapped-door {
+  background-image: url('./images/library_hidden_door.jpg')
 }
 
 /* mobile overrides */
