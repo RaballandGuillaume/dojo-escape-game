@@ -35,10 +35,59 @@ export class World {
     this.isIronKeyUsed = false
     this.isGoldenKeyFound = false
     this.isGoldenKeyUsed = false
-    this.isGoldenDoorOpened = false
+    this.isGoldenDoorFound = false
     this.isNoteBookFound = false
+    this.isLetterFound = false
+    this.isLetterUsed = false
+    this.lookedOntheLeft = false
+    this.lookedOntheRight = false
+    this.isSilverCoinFound = false
+    this.isBronzeKeyFound = false
+    this.isBronzeDoorFound = false
+    this.isBronzeDoorOpened = false
+    this.cookedMeals = {
+      burger: 0, 
+      pasta: 0, 
+      cake: 0, 
+      specialMeal: 0
+    }
+    this.guards = {
+      vestiary: {
+        chat: 0, 
+        sport: 0, 
+        pasta: 0
+      }, 
+      library: {
+        chat: 0, 
+        burger: 0, 
+        cake: 0,
+        silverCoins: 0
+      },
+      outdoor: {
+        chat: 0,
+        goldCoins: 0,
+        specialMeal: 0
+      }
+    }
+    this.isGoldCoinFound = false
+    this.isGoldCoinUsed = false
+    this.isSmallBoxFound = false
+    this.isSmallBoxUsed = false
+    this.isCookingBookFound = false
+    this.isCookingBookUsed = false
+    this.isPostItFound = false
+    this.isBackDoorFound = false
+    this.isBackDoorOpened = false
+    this.booksRead = 0
+    this.isTrappedDoorFound = false
+    this.isSpecialCookingBookFound = false
+    this.isSpecialCookingBookUsed = false
+    this.isCodeLockerFound = false
+    this.isCodeLockerUsed = false
+    this.isPictureFound = false
+    this.isSecurityCardFound = false
     this.isRoom1Found = true
-    this.isRoom2Found = true
+    this.isRoom2Found = false
     this.isRoom3Found = false
     this.isRoom4Found = false
     this.isRoom5Found = false

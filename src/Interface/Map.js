@@ -42,12 +42,14 @@ export const drawRoom = (room) => {
     )
   }
   if (room.isDiscovered()) {
+    // clear the room to wipe out the player
     mapContext.clearRect(
       room.xPos * scaling,
       room.yPos * scaling,
       room.width * scaling,
       room.height * scaling
     )
+    // add darkness above the map
     mapContext.fillStyle = 'rgba(0,0,0,0.5)'
     mapContext.fillRect(
       room.xPos * scaling,
@@ -55,10 +57,7 @@ export const drawRoom = (room) => {
       room.width * scaling,
       room.height * scaling
     )
-    /*var img = document.createElement('img')
-    img.src = './Images/' + mapImages[room.index] + '.jpg'
-    console.log(img.src)
-    mapContext.drawImage(img, room.xPos * scaling, room.yPos * scaling, room.width * scaling, room.height * scaling)*/
+    // add the name of the room
     mapContext.font = '0.8rem Arial'
     mapContext.fillStyle = 'white'
     mapContext.textAlign = 'start'
