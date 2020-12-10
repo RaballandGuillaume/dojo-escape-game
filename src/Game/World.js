@@ -1,6 +1,6 @@
 import { Player } from './Player'
 import { Room } from './Room'
-import { drawRoom, drawPlayer } from '../Interface/Map'
+import { drawRoom, drawPlayer, drawMap } from '../Interface/Map'
 import { Action, MoveAction, InventoryAction } from './Action'
 import { clearActions, addEnabledActions } from '../Interface/Action'
 import { Item } from './Item'
@@ -87,6 +87,7 @@ export class World {
     this.isCodeLockerFound = false
     this.isCodeLockerUsed = false
     this.isPictureFound = false
+    this.isEnigmaUsed = false
     this.isSecurityCardFound = false
     this.isRoom1Found = true
     this.isRoom2Found = false
@@ -96,6 +97,7 @@ export class World {
     this.isRoom6Found = false
     this.isRoom7Found = false
     this.openInventory = false
+    this.playerWon = false
     this.isRedGuardInRoom2 = () => (
       (this.player.currentRoom === this.rooms[1] &&
       this.guards.vestiary.chat >= 0 && 
@@ -115,6 +117,10 @@ export class World {
       this.lookedOnTheRight &&
       this.guards.library.chat >= 0
     )
+    this.isGreenGuardInRoom7 = () => (
+      this.player.currentRoom === this.rooms[6] &&
+      !this.isGoldenKeyFound
+    )
   }
 
   /**
@@ -128,6 +134,7 @@ export class World {
         .then(() => {
           addEnabledActions(this)
           clearItems(this)
+          drawMap(this)
         })
         .catch(console.error)
     }
@@ -143,6 +150,7 @@ export class World {
       return (callback ? callback() : Promise.resolve(null))
         .then(() => {
           addEnabledItems(this)
+          drawMap(this)
         })
         .catch(console.error)
     }

@@ -23,7 +23,7 @@ export class Player {
    * @param {World} world
    */
   move(wantedRoom, world) {
-    erasePlayer(this)
+    //erasePlayer(this)
     this.currentRoom = wantedRoom
     drawMap(world)
   }

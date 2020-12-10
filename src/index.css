@@ -319,6 +319,7 @@ body {
   color: white;
   border-color: rgb(90,90,90);
   cursor: pointer;
+  transition-duration: 0.3s;
 }
 
 .parameter-button:focus {

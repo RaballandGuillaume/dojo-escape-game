@@ -10,10 +10,12 @@ const mapImages = ['win', 'room1', 'room2', 'room3', 'room4', 'room5', 'room6', 
 import { Room } from '../Game/Room'
 import { Player } from '../Game/Player'
 import { World } from '../Game/World'
+import { clearActions } from './Action'
+import { clearItems } from './Item'
 
 const canvasId = 'map'
 const scaling = 100
-const playerSize = 1 / 10
+const playerSize = 1 / 12
 
 const mapCanvas = document.getElementById(canvasId)
 const mapContext = mapCanvas.getContext('2d')
@@ -68,7 +70,12 @@ export const drawRoom = (room) => {
     mapContext.font = '0.8rem Arial'
     mapContext.fillStyle = 'white'
     mapContext.textAlign = 'start'
-    mapContext.fillText(room.name, room.xPos * scaling + 5, room.yPos * scaling + 20)
+    if (room.yPos > 1) {
+      mapContext.fillText(room.name, room.xPos * scaling + 5, (room.yPos + room.height) * scaling - 10)
+    }
+    else {
+      mapContext.fillText(room.name, room.xPos * scaling + 5, room.yPos * scaling + 20)
+    }
   }
 }
 
@@ -97,7 +104,9 @@ export const drawPlayer = (player) => {
   mapContext.textAlign = 'center'
   mapContext.font = '0.8rem Arial'
   mapContext.fillText(player.name, playerXPos, playerYPos - playerSize * scaling - 5)
+  // update the title with the name of the current room
   updateTitle(player)
+  
 }
 
 /**
@@ -112,8 +121,76 @@ export const erasePlayer = (player) => {
  * @param {World} world - The world to draw.
  */
 export const drawMap = (world) => {
+  
+  // draw the rooms
   world.rooms.forEach(drawRoom)
+
+  // draw the player
   drawPlayer(world.player)
+
+  // draw the doors in the room
+  if (world.player.currentRoom === world.rooms[0]) { // room 1 : left
+    if (world.isIronDoorOpened) { // door to corridor
+      drawDoor(world.rooms[0], 'left', true)
+    }
+    else {
+      drawDoor(world.rooms[0], 'left', false)
+    }
+  }
+  if (world.player.currentRoom === world.rooms[1]) { // room 2 : bottom-left, bottom, bottom-right and top-right
+    drawDoor(world.rooms[1], 'top-right', true) // door to cell
+    if (world.player.currentRoom === world.rooms[1] && 
+      world.rooms[5].isDiscovered() &&
+      world.guards.library.chat === -1 &&
+      world.guards.vestiary.chat === -1) { // door to library
+      drawDoor(world.rooms[1], 'bottom-left', true)
+    }
+    else if (world.lookedOnTheRight) {
+      drawDoor(world.rooms[1], 'bottom-left', false)
+    }
+    if (world.isBronzeDoorFound) { // door to kitchen
+      if (world.isBronzeDoorOpened) {
+        drawDoor(world.rooms[1], 'bottom', true)
+      } 
+      else if (!world.isBronzeDoorOpened) {
+        drawDoor(world.rooms[1], 'bottom', false)
+      }
+    }
+    if (world.rooms[2].isDiscovered()) { // door to vestiary
+      drawDoor(world.rooms[1], 'bottom-right', true)
+    }
+    else if (world.lookedOnTheLeft) {
+      drawDoor(world.rooms[1], 'bottom-right', false)
+    }
+  }
+  if (world.player.currentRoom === world.rooms[2]) { // room 3 : left and bottom
+    drawDoor(world.rooms[2], 'left', true)
+    if (world.rooms[3].isDiscovered()) {
+      drawDoor(world.rooms[2], 'bottom', true)
+    }
+  }
+  if (world.player.currentRoom === world.rooms[3]) { // room 4 : top
+    drawDoor(world.rooms[3], 'top', true)
+  }
+  if (world.player.currentRoom === world.rooms[4]) { // room 5 : left and top
+    drawDoor(world.rooms[4], 'top', true)
+    if (world.rooms[6].isDiscovered() &&
+      !world.isSecurityCardFound) {
+      drawDoor(world.rooms[4], 'left', false)
+    }
+    else if (world.rooms[6].isDiscovered() &&
+      world.isSecurityCardFound) {
+        drawDoor(world.rooms[4], 'left', false)
+      }
+  }
+  if (world.player.currentRoom === world.rooms[5]) { // room 6 : bottom-right
+    drawDoor(world.rooms[5], 'bottom-right', true)
+  }
+  if (world.player.currentRoom === world.rooms[6]) { // room 6 : right
+    drawDoor(world.rooms[6], 'right', true)
+  }
+
+  // draw the guards in the room
   if (world.isRedGuardInRoom2()) {
     drawGuard(world.rooms[1], 'red')
   }
@@ -122,6 +199,16 @@ export const drawMap = (world) => {
   }
   if (world.isBlueGuardInRoom2()) {
     drawGuard(world.rooms[1], 'blue')
+  }
+  if (world.isGreenGuardInRoom7()) {
+    drawGuard(world.rooms[6], 'darkgreen')
+  }
+  
+  // if player escaped and won the game
+  if (world.playerWon) {
+    winGame(world.player)
+    clearItems(world)
+    clearActions()
   }
 }
 
@@ -174,10 +261,10 @@ export const askPlayerName = (player, callback = undefined) => {
  * @param {Player} player - The player who won the game
  */
 export const winGame = (player) => {
+  erasePlayer(player)
   background.classList = ['win']
   title.innerHTML = 'Congratulations !'
   mapCanvas.classList = ['win-map']
-  erasePlayer(player)
 }
 
 /**
@@ -192,19 +279,24 @@ export const restartDrawMap = (world) => {
 /**
  * Draw guard in the room with the corresponding color.
  * @param {Room} room - The room where to draw the guard.
- * @param {string} color - the color of the guard to draw.
+ * @param {string} color - The color of the guard to draw.
  */
 export const drawGuard = (room, color) => {
   mapContext.fillStyle = color
-  var guardXPos = room.xPos * scaling
+  var guardXPos, guardYPos
   if (color === 'blue') {
-    guardXPos = room.xPos * scaling + playerSize * scaling + 3
+    guardXPos = room.xPos * scaling + playerSize * scaling + 20
+    guardYPos = (room.yPos + room.height * 4 / 5) * scaling
   }
-  else if (color === 'red') {
-    guardXPos = room.xPos * scaling + room.width * scaling - playerSize * scaling - 3
+  if (color === 'red') {
+    guardXPos = room.xPos * scaling + room.width * scaling - playerSize * scaling - 20
+    guardYPos = (room.yPos + room.height * 4 / 5) * scaling
   }
-  const guardYPos =
-    (room.yPos + room.height * 4 / 5) * scaling
+  if (color === 'darkgreen') {
+    guardXPos = room.xPos * scaling + playerSize * scaling + 5
+    guardYPos = (room.yPos + room.height * 1 / 2) * scaling
+    console.log(guardXPos, guardYPos)
+  }
   mapContext.beginPath()
   mapContext.arc(
     guardXPos,
@@ -220,20 +312,70 @@ export const drawGuard = (room, color) => {
 /**
  * Draw door in the room with the corresponding color.
  * @param {Room} room - The room where to draw the guard.
- * @param {string} color - the color of the guard to draw.
+ * @param {string} side - The side where to draw the door in the room
+ * @param {boolean} opened - If the door is opened or closed
  */
-export const drawDoor = (room, color, side) => {
-  mapContext.fillStyle = color
+export const drawDoor = (room, side, opened) => {
   var doorXPos, doorYPos, doorWidth, doorHeight
   switch (side) {
     case 'left':
-      doorXPos = room.xPos
+      doorXPos = room.xPos * scaling
+      doorYPos = (room.yPos + room.height / 2) * scaling - (opened ? 7 : 10)
+      doorWidth = (opened ? 20 : 7)
+      doorHeight = (opened ? 7 : 20)
+      break
+    case 'right':
+      doorXPos = (room.xPos + room.width) * scaling - (opened ? 20 : 7)
+      doorYPos = (room.yPos + room.height / 2) * scaling - (opened ? 7 : 10)
+      doorWidth = (opened ? 20 : 7)
+      doorHeight = (opened ? 7 : 20)
+      break
+    case 'bottom':
+      doorXPos = (room.xPos + room.width / 2) * scaling - (opened ? 10 : 7)
+      doorYPos = (room.yPos + room.height) * scaling - (opened ? 20 : 7)
+      doorWidth = (opened ? 7 : 20)
+      doorHeight = (opened ? 20 : 7)
+      break
+    case 'top':
+      doorXPos = (room.xPos + room.width / 2) * scaling - (opened ? 10 : 7)
+      doorYPos = room.yPos * scaling
+      doorWidth = (opened ? 7 : 20)
+      doorHeight = (opened ? 20 : 7)
+      break
+    case 'bottom-left':
+      doorXPos = room.xPos * scaling
+      doorYPos = (room.yPos + room.height * 3 / 4) * scaling - (opened ? 10 : 10)
+      doorWidth = (opened ? 20 : 7)
+      doorHeight = (opened ? 7 : 20)
+      break
+    case 'bottom-right':
+      doorXPos = (room.xPos + room.width) * scaling - (opened ? 20 : 7)
+      doorYPos = (room.yPos + room.height * 3 / 4) * scaling - (opened ? 10 : 10)
+      doorWidth = (opened ? 20 : 7)
+      doorHeight = (opened ? 7 : 20)
+      break
+    case 'top-right':
+      doorXPos = (room.xPos + room.width) * scaling - (opened ? 20 : 7)
+      doorYPos = (room.yPos + room.height * 1 / 4) * scaling - (opened ? 10 : 10)
+      doorWidth = (opened ? 20 : 7)
+      doorHeight = (opened ? 7 : 20)
+      break
+    default:
+      console.log('error when drawing the door : ', room, side, opened)
   }
-  mapContext.fillStyle = 'black'
+  
+  mapContext.fillStyle = '#664400' // door in brown
   mapContext.fillRect(
-    doorXPos * scaling,
-    doorYPos * scaling,
-    doorWidth * scaling,
-    doorHeight * scaling
+    doorXPos,
+    doorYPos,
+    doorWidth,
+    doorHeight
+  )
+  mapContext.strokeStyle = 'black' // edges of door in black
+  mapContext.strokeRect(
+    doorXPos,
+    doorYPos,
+    doorWidth,
+    doorHeight
   )
 }
