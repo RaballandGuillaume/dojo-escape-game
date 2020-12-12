@@ -1,10 +1,31 @@
 import { Player } from './Player'
 import { Room } from './Room'
-import { drawRoom, drawPlayer, drawMap } from '../Interface/Map'
+import { drawRoom, drawPlayer, drawMap, restartDrawMap } from '../Interface/Map'
 import { Action, MoveAction, InventoryAction } from './Action'
 import { clearActions, addEnabledActions } from '../Interface/Action'
 import { Item } from './Item'
 import { clearItems, addEnabledItems } from '../Interface/Item'
+import { say } from '../Interface/Text'
+
+// Custom JSON.parse and JSON.stringify functions to manage serializing functions in JSON data
+var JSONfn;
+if (!JSONfn) {
+    JSONfn = {};
+}
+(function () {
+  JSONfn.stringify = function(obj) {
+    return JSON.stringify(obj,function(key, value){
+            return (typeof value === 'function' ) ? value.toString() : value;
+        });
+  }
+
+  JSONfn.parse = function(str) {
+    return JSON.parse(str,function(key, value){
+        if(typeof value != 'string') return value;
+        return ( value.substring(0,8) == 'function') ? eval('('+value+')') : value;
+    });
+  }
+}());
 
 export class World {
   /**
@@ -279,6 +300,176 @@ export class World {
     this.items.push(item)
     return item
   }
+
+  // reset world parameters => check if this section is the same as the default world parameters
+  resetGame = () => {
+    if (!this.playerWon) {
+      clearItems(this)
+    }
+    this.notes = ''
+    this.isIronDoorOpened = false
+    this.isIronKeyFound = false
+    this.isIronKeyUsed = false
+    this.isGoldenKeyFound = false
+    this.isGoldenKeyUsed = false
+    this.isGoldenDoorFound = false
+    this.isNoteBookFound = false
+    this.isLetterFound = false
+    this.isLetterUsed = false
+    this.lookedOnTheLeft = false
+    this.lookedOnTheRight = false
+    this.isSilverCoinFound = false
+    this.isSilverCoinUsed = false
+    this.isBronzeKeyFound = false
+    this.isBronzeDoorFound = false
+    this.isBronzeDoorOpened = false
+    this.cookedMeals = {burger: 0, pasta: 0, cake: 0, specialMeal: 0}
+    this.guards = {
+      vestiary: {
+        chat: 0, 
+        sport: 0, 
+        pasta: 0
+      }, 
+      library: {
+        chat: 0, 
+        burger: 0, 
+        cake: 0,
+        silverCoins: 0
+      },
+      outdoor: {
+        chat: 0,
+        goldCoins: 0,
+        specialMeal: 0
+      }
+    }
+    this.isGoldCoinFound = false
+    this.isGoldCoinUsed = false
+    this.isSmallBoxFound = false
+    this.isSmallBoxUsed = false
+    this.isCookingBookFound = false
+    this.isCookingBookUsed = false
+    this.isPostItFound = false
+    this.isPostItUsed = false
+    this.isBackDoorFound = false
+    this.isBackDoorOpened = false
+    this.booksRead = 0
+    this.isTrappedDoorFound = false
+    this.isSpecialCookingBookFound = false
+    this.isSpecialCookingBookUsed = false
+    this.isCodeLockerFound = false
+    this.isCodeLockerUsed = false
+    this.isPictureFound = false
+    this.isEnigmaUsed = false
+    this.isSecurityCardFound = false
+    this.isRoom1Found = true
+    this.isRoom2Found = false
+    this.isRoom3Found = false
+    this.isRoom4Found = false
+    this.isRoom5Found = false
+    this.isRoom6Found = false
+    this.isRoom7Found = false
+    this.playerWon = false
+    this.player.move(this.rooms[0], this)
+    addEnabledActions(this)
+    addEnabledItems(this)
+    restartDrawMap(this)
+    this.beginningAction()
+    this.updateLocalData()
+  }
+
+  getDataFromLocalStorage = (jsonData) => {
+    const data = JSONfn.parse(jsonData)
+    this.notes = data.world.notes
+    this.isIronDoorOpened = data.world.isIronDoorOpened
+    this.isIronKeyFound = data.world.isIronKeyFound
+    this.isIronKeyUsed = data.world.isIronKeyUsed
+    this.isGoldenKeyFound = data.world.isGoldenKeyFound
+    this.isGoldenKeyUsed = data.world.isGoldenKeyUsed
+    this.isGoldenDoorFound = data.world.isGoldenDoorFound
+    this.isNoteBookFound = data.world.isNoteBookFound
+    this.isLetterFound = data.world.isLetterFound
+    this.isLetterUsed = data.world.isLetterUsed
+    this.isSilverCoinFound = data.world.isSilverCoinFound
+    this.isSilverCoinUsed = data.world.isSilverCoinUsed
+    this.isBronzeKeyFound = data.world.isBronzeKeyFound
+    this.isBronzeDoorFound = data.world.isBronzeDoorFound
+    this.isBronzeDoorOpened = data.world.isBronzeDoorOpened
+    this.cookedMeals = data.world.cookedMeals
+    this.guards = data.world.guards
+    this.lookedOnTheLeft = data.world.lookedOnTheLeft
+    this.lookedOnTheRight = data.world.lookedOnTheRight
+    this.isGoldCoinFound = data.world.isGoldCoinFound
+    this.isGoldCoinUsed = data.world.isGoldCoinUsed
+    this.isSmallBoxFound = data.world.isSmallBoxFound
+    this.isSmallBoxUsed = data.world.isSmallBoxUsed
+    this.isCookingBookFound = data.world.isCookingBookFound
+    this.isCookingBookUsed = data.world.isCookingBookUsed
+    this.isPostItFound = data.world.isPostItFound
+    this.isPostItUsed = data.world.isPostItUsed
+    this.isBackDoorFound = data.world.isBackDoorFound
+    this.isBackDoorOpened = data.world.isBackDoorOpened
+    this.booksRead = data.world.booksRead
+    this.isTrappedDoorFound = data.world.isTrappedDoorFound
+    this.isSpecialCookingBookFound = data.world.isSpecialCookingBookFound
+    this.isSpecialCookingBookUsed = data.world.isSpecialCookingBookUsed
+    this.isCodeLockerFound = data.world.isCodeLockerFound
+    this.isCodeLockerUsed = data.world.isCodeLockerUsed
+    this.isPictureFound = data.world.isPictureFound
+    this.isEnigmaUsed = data.world.isEnigmaUsed
+    this.isSecurityCardFound = data.world.isSecurityCardFound
+    this.isRoom1Found = data.world.isRoom1Found
+    this.isRoom2Found = data.world.isRoom2Found
+    this.isRoom3Found = data.world.isRoom3Found
+    this.isRoom4Found = data.world.isRoom4Found
+    this.isRoom5Found = data.world.isRoom5Found
+    this.isRoom6Found = data.world.isRoom6Found
+    this.isRoom7Found = data.world.isRoom7Found
+    this.playerWon = data.world.playerWon
+    this.isRedGuardInRoom2 = () => (
+      (this.player.currentRoom === this.rooms[1] &&
+        this.guards.vestiary.chat >= 0 && 
+      this.lookedOnTheLeft &&
+      this.guards.vestiary.chat !== 2) ||
+      (this.player.currentRoom === this.rooms[1] &&
+        this.isBronzeKeyFound &&
+        this.guards.vestiary.chat === 2)
+    )
+    this.isRedGuardInRoom3 = () => (
+      this.player.currentRoom === this.rooms[2] &&
+      this.guards.vestiary.sport === 0 &&
+      this.guards.vestiary.chat === 2
+    )
+    this.isBlueGuardInRoom2 = () => (
+      this.player.currentRoom === this.rooms[1] &&
+      this.lookedOnTheRight &&
+      this.guards.library.chat >= 0
+    )
+    this.isGreenGuardInRoom7 = () => (
+      this.player.currentRoom === this.rooms[6] &&
+      !this.isGoldenKeyFound
+    )
+    this.rooms.forEach((room) => {
+      if (room.name === data.world.player.currentRoom.name && !this.playerWon){
+        this.player.move(room, this)
+        return
+      }
+    })
+  }
+
+  updateLocalData = () => {
+    const data = {
+      world: this,
+    }
+    const jsonData = JSONfn.stringify(data)
+    localStorage.setItem('dojoEscapeGameData', jsonData)
+  }
+
+  beginningAction = () => {
+    clearActions()
+    setTimeout(() => {
+      say(`${this.player.name} wakes up in the cell ...`)
+      addEnabledActions(this)
+      clearItems(this)
+    }, 1000)
+  }
 }
-
-

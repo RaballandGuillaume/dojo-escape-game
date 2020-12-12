@@ -71,6 +71,59 @@
       </div>
     </div>
 
+    <div class="modal" id="letter-modal">
+      <div class="enigma-modal-body">
+        <span class="close-modal" id="close-letter-modal">&times;</span>
+        <h2 class="modal-title">Letter</h2>
+        <div class="enigma-modal-group">
+          <div class="enigma-body letter-body">
+            <p class="enigma-title">My dear friend,</p>
+            <p class="enigma-text">I wrote this letter to give you the oppportunity of leaving this place thanks to a precious item.
+               To avoid being caught and blamed for helping you, I have hidden some clues in the different rooms where you can go.
+               You can find the first padlock where people eat. It can be unlocked thanks to the answer of this first enigma :</p>
+            <p class="enigma-text"><span class="enigma-title">1<sup>st</sup> enigma :</span> If I am now 4 times older than you were when I was as old as you are today, how old are you ?</p>
+            <p class="enigma-title">The code is made of the 2 digits of the answer. I hope this will help you.</p>
+            <p class="enigma-text">Thanks to this code, you will find another enigma and the answer of the second enigma will give you the code of a second padlock, located where people read and think.</p>
+            <p class="enigma-signature">Antonio</p>
+          </div>
+          <button type="submit" class="confirm-button enigma-confirm-button" id="letter-confirm-button">Ok, I read it</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal" id="enigma-modal">
+      <div class="enigma-modal-body">
+        <span class="close-modal" id="close-enigma-modal">&times;</span>
+        <h2 class="modal-title">Enigma</h2>
+        <div class="enigma-modal-group">
+          <div class="enigma-body">
+            <p class="enigma-title">Congratulations if you found this piece of paper, now this is the second enigma.</p>
+            <p class="enigma-text"><span class="enigma-title">2<sup>nd</sup> enigma :</span> Imagine that you have in front of you a cooking book with 100 recipes.
+              I tell you that 85 recipes contain tomato sauce, 80 recipes contain pasta, 75 recipes contain cheese and 70 recipes contain onion.
+              How many recipes at least do not contain any of the 4 ingredients ?</p>
+            <p class="enigma-title">The code is made of the 2 digits of the answer.<span id="help-enigma-icon">Need help ?</span></p>
+            <div id="help-enigma">
+              <p class="enigma-title">If the enigma above is too hard for you, the following enigma has exactly the same answer :</p>
+              <p class="enigma-text">During a banquet, there is a barrel that weighs 230 kg at the beginning but only 120 kg at the end after having emptied half of it. 
+                How much does the empty barrel weigh ?</p>
+            </div>
+          </div>
+          <button type="submit" class="confirm-button enigma-confirm-button" id="enigma-confirm-button">Ok, I read it</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal" id="ask-code-modal">
+      <div class="modal-body">
+        <span class="close-modal" id="close-code-modal">&times;</span>
+        <h2 class="modal-title">Code to unlock the padlock (2 digits)</h2>
+        <div id="ask-code-modal-group">
+          <input type="text" minlength=2 maxlength=2 class="modal-input" id="code-input" value="05">
+          <p class="alert-message" id="wrong-code-alert">This is not the right code !</p>
+          <button type="submit" class="confirm-button" id="code-confirm-button">Try this code</button>
+        </div>
+      </div>
+    </div>
 
   </body>
     <script type="module" src="./index.js"></script>

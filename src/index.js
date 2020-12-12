@@ -1,34 +1,12 @@
 import { World } from './Game/World'
 import { say } from './Interface/Text'
 import { clearActions, addEnabledActions } from './Interface/Action'
-import { askPlayerName, drawMap, winGame, restartDrawMap, drawGuard } from './Interface/Map'
-import { playerButton, resetButton, pauseButton, soundButton } from './Interface/Parameters'
+import { askPlayerName, drawMap, restartDrawMap, drawGuard } from './Interface/Map'
+import { initializeParameters, displayLetterModal, displayEnigmaModal, displayCodeModal } from './Interface/Parameters'
 import { clearItems, addEnabledItems, openNoteBook } from './Interface/Item'
 
-// Custom JSON.parse and JSON.stringify functions to manage serializing functions in JSON data
-var JSONfn;
-if (!JSONfn) {
-    JSONfn = {};
-}
-(function () {
-  JSONfn.stringify = function(obj) {
-    return JSON.stringify(obj,function(key, value){
-            return (typeof value === 'function' ) ? value.toString() : value;
-        });
-  }
-
-  JSONfn.parse = function(str) {
-    return JSON.parse(str,function(key, value){
-        if(typeof value != 'string') return value;
-        return ( value.substring(0,8) == 'function') ? eval('('+value+')') : value;
-    });
-  }
-}());
-
 const main = () => {
-  
-  document.getElementById('note-book-modal').style.display = 'none' // to avoid bug ...
-  
+    
   var world = new World({name: 'World'})
 
   // Check if data is already stored in local storage
@@ -87,178 +65,8 @@ const main = () => {
 
   // Check if data is already stored in local storage
   if (jsonData) {
-    document.getElementById('ask-player-name-modal').style.display = 'none' // to avoid bug ...
-    var data = JSONfn.parse(jsonData)
-    player.name = data.world.player.name
-    world.notes = data.world.notes
-    world.isIronDoorOpened = data.world.isIronDoorOpened
-    world.isIronKeyFound = data.world.isIronKeyFound
-    world.isIronKeyUsed = data.world.isIronKeyUsed
-    world.isGoldenKeyFound = data.world.isGoldenKeyFound
-    world.isGoldenKeyUsed = data.world.isGoldenKeyUsed
-    world.isGoldenDoorFound = data.world.isGoldenDoorFound
-    world.isNoteBookFound = data.world.isNoteBookFound
-    world.isLetterFound = data.world.isLetterFound
-    world.isLetterUsed = data.world.isLetterUsed
-    world.isSilverCoinFound = data.world.isSilverCoinFound
-    world.isSilverCoinUsed = data.world.isSilverCoinUsed
-    world.isBronzeKeyFound = data.world.isBronzeKeyFound
-    world.isBronzeDoorFound = data.world.isBronzeDoorFound
-    world.isBronzeDoorOpened = data.world.isBronzeDoorOpened
-    world.cookedMeals = data.world.cookedMeals
-    world.guards = data.world.guards
-    world.lookedOnTheLeft = data.world.lookedOnTheLeft
-    world.lookedOnTheRight = data.world.lookedOnTheRight
-    world.isGoldCoinFound = data.world.isGoldCoinFound
-    world.isGoldCoinUsed = data.world.isGoldCoinUsed
-    world.isSmallBoxFound = data.world.isSmallBoxFound
-    world.isSmallBoxUsed = data.world.isSmallBoxUsed
-    world.isCookingBookFound = data.world.isCookingBookFound
-    world.isCookingBookUsed = data.world.isCookingBookUsed
-    world.isPostItFound = data.world.isPostItFound
-    world.isPostItUsed = data.world.isPostItUsed
-    world.isBackDoorFound = data.world.isBackDoorFound
-    world.isBackDoorOpened = data.world.isBackDoorOpened
-    world.booksRead = data.world.booksRead
-    world.isTrappedDoorFound = data.world.isTrappedDoorFound
-    world.isSpecialCookingBookFound = data.world.isSpecialCookingBookFound
-    world.isSpecialCookingBookUsed = data.world.isSpecialCookingBookUsed
-    world.isCodeLockerFound = data.world.isCodeLockerFound
-    world.isCodeLockerUsed = data.world.isCodeLockerUsed
-    world.isPictureFound = data.world.isPictureFound
-    world.isEnigmaUsed = data.world.isEnigmaUsed
-    world.isSecurityCardFound = data.world.isSecurityCardFound
-    world.isRoom1Found = data.world.isRoom1Found
-    world.isRoom2Found = data.world.isRoom2Found
-    world.isRoom3Found = data.world.isRoom3Found
-    world.isRoom4Found = data.world.isRoom4Found
-    world.isRoom5Found = data.world.isRoom5Found
-    world.isRoom6Found = data.world.isRoom6Found
-    world.isRoom7Found = data.world.isRoom7Found
-    world.playerWon = data.world.playerWon
-    world.isRedGuardInRoom2 = () => (
-      (player.currentRoom === world.rooms[1] &&
-      world.guards.vestiary.chat >= 0 && 
-      world.lookedOnTheLeft &&
-      world.guards.vestiary.chat !== 2) ||
-      (player.currentRoom === world.rooms[1] &&
-        world.isBronzeKeyFound &&
-        world.guards.vestiary.chat === 2)
-    )
-    world.isRedGuardInRoom3 = () => (
-      player.currentRoom === world.rooms[2] &&
-      world.guards.vestiary.sport === 0 &&
-      world.guards.vestiary.chat === 2
-    )
-    world.isBlueGuardInRoom2 = () => (
-      player.currentRoom === world.rooms[1] &&
-      world.lookedOnTheRight &&
-      world.guards.library.chat >= 0
-    )
-    world.isGreenGuardInRoom7 = () => (
-      player.currentRoom === room7 &&
-      !world.isGoldenKeyFound
-    )
-    world.rooms.forEach((room) => {
-      if (room.name === data.world.player.currentRoom.name && !world.playerWon){
-        player.move(room, world)
-        return
-      }
-    })
-  }
-
-  // Game functions
-  // reset world parameters => check if this section is the same as the default world parameters
-  const resetGame = () => {
-    if (!world.playerWon) {
-      clearItems(world)
-    }
-    world.notes = ''
-    world.isIronDoorOpened = false
-    world.isIronKeyFound = false
-    world.isIronKeyUsed = false
-    world.isGoldenKeyFound = false
-    world.isGoldenKeyUsed = false
-    world.isGoldenDoorFound = false
-    world.isNoteBookFound = false
-    world.isLetterFound = false
-    world.isLetterUsed = false
-    world.lookedOnTheLeft = false
-    world.lookedOnTheRight = false
-    world.isSilverCoinFound = false
-    world.isSilverCoinUsed = false
-    world.isBronzeKeyFound = false
-    world.isBronzeDoorFound = false
-    world.isBronzeDoorOpened = false
-    world.cookedMeals = {burger: 0, pasta: 0, cake: 0, specialMeal: 0}
-    world.guards = {
-      vestiary: {
-        chat: 0, 
-        sport: 0, 
-        pasta: 0
-      }, 
-      library: {
-        chat: 0, 
-        burger: 0, 
-        cake: 0,
-        silverCoins: 0
-      },
-      outdoor: {
-        chat: 0,
-        goldCoins: 0,
-        specialMeal: 0
-      }
-    }
-    world.isGoldCoinFound = false
-    world.isGoldCoinUsed = false
-    world.isSmallBoxFound = false
-    world.isSmallBoxUsed = false
-    world.isCookingBookFound = false
-    world.isCookingBookUsed = false
-    world.isPostItFound = false
-    world.isPostItUsed = false
-    world.isBackDoorFound = false
-    world.isBackDoorOpened = false
-    world.booksRead = 0
-    world.isTrappedDoorFound = false
-    world.isSpecialCookingBookFound = false
-    world.isSpecialCookingBookUsed = false
-    world.isCodeLockerFound = false
-    world.isCodeLockerUsed = false
-    world.isPictureFound = false
-    world.isEnigmaUsed = false
-    world.isSecurityCardFound = false
-    world.isRoom1Found = true
-    world.isRoom2Found = false
-    world.isRoom3Found = false
-    world.isRoom4Found = false
-    world.isRoom5Found = false
-    world.isRoom6Found = false
-    world.isRoom7Found = false
-    world.playerWon = false
-    player.move(room1, world)
-    addEnabledActions(world)
-    addEnabledItems(world)
-    restartDrawMap(world)
-    beginningAction()
-    updateLocalData()
-  }
-
-  const updateLocalData = () => {
-    data = {
-      world: world,
-    }
-    const jsonData = JSONfn.stringify(data)
-    localStorage.setItem('dojoEscapeGameData', jsonData)
-  }
-
-  const beginningAction = () => {
-    clearActions()
-    setTimeout(() => {
-      say(`${player.name} wakes up in the cell ...`)
-      addEnabledActions(world)
-      clearItems(world)
-    }, 1000)
+    world.getDataFromLocalStorage(jsonData)
+    player = world.player
   }
 
   // Create actions and items
@@ -275,7 +83,7 @@ const main = () => {
       text: 'Return to the Cell', 
       callback: () => 
       new Promise((resolve) => {
-        updateLocalData()
+        world.updateLocalData()
         resolve()
       }),
       isEnabled: () => (
@@ -291,7 +99,7 @@ const main = () => {
       text: 'Move to the Corridor', 
       callback: () =>
         new Promise((resolve) => {
-          updateLocalData()
+          world.updateLocalData()
           resolve()
         }),
       isEnabled: () => (
@@ -314,7 +122,7 @@ const main = () => {
         new Promise((resolve) => {
           setTimeout(() => {
             say(`${player.name} sees a lot of stuffs in the boxes`)
-            updateLocalData()
+            world.updateLocalData()
             resolve()
           }, 500)
         }),
@@ -334,7 +142,7 @@ const main = () => {
       text: 'Go to the Restrooms', 
       callback: () =>
         new Promise((resolve) => {
-          updateLocalData()
+          world.updateLocalData()
           resolve()
         }),
       isEnabled: () => (
@@ -353,7 +161,7 @@ const main = () => {
         new Promise((resolve) => {
           setTimeout(() => {
             say(`This kitchen is really messy ...`)
-            updateLocalData()
+            world.updateLocalData()
             resolve()
           }, 500)
         }),
@@ -373,7 +181,7 @@ const main = () => {
       text: 'Enter the Library', 
       callback: () =>
         new Promise((resolve) => {
-          updateLocalData()
+          world.updateLocalData()
           resolve()
         }),
       isEnabled: () => (
@@ -395,7 +203,7 @@ const main = () => {
           if (!world.isGoldenKeyFound) {
             setTimeout(() => {
               say(`A green guard is approaching ...`)
-              updateLocalData()
+              world.updateLocalData()
               resolve()
             }, 1200)
           }
@@ -425,7 +233,7 @@ const main = () => {
           world.isNoteBookFound = true
           world.isRoom2Found = true
           //drawMap(world)
-          updateLocalData()
+          world.updateLocalData()
           resolve()
         }, 1000)
       }),
@@ -444,7 +252,7 @@ const main = () => {
         setTimeout(() => {
           say(`${player.name} found an iron key in a drawer`)
           world.isIronKeyFound = true
-          updateLocalData()
+          world.updateLocalData()
           resolve()
         }, 3000)
       }),
@@ -462,7 +270,7 @@ const main = () => {
         say(`${player.name} searches the room ...`)
         setTimeout(() => {
           say(`${player.name} found a piece of paper in the room ... But there is nothing written on it.`)
-          updateLocalData()
+          world.updateLocalData()
           resolve()
         }, 2000)
       }),
@@ -481,7 +289,7 @@ const main = () => {
         setTimeout(() => {
           say(`${player.name} found a letter under the bed.`)
           world.isLetterFound = true
-          updateLocalData()
+          world.updateLocalData()
           resolve()
         }, 1500)
       }),
@@ -499,7 +307,7 @@ const main = () => {
         say(`${player.name} is sleeping ...`)
         setTimeout(() => {
           say(`${player.name} wakes up and feels better ! :)`)
-          updateLocalData()
+          world.updateLocalData()
           resolve()
         }, 3000)
       }),
@@ -517,7 +325,7 @@ const main = () => {
         setTimeout(() => {
           say(`${player.name} found a gold coin under the furniture !`)
           world.isGoldCoinFound = true
-          updateLocalData()
+          world.updateLocalData()
           resolve()
         }, 3000)
       }),
@@ -538,7 +346,7 @@ const main = () => {
           say(`${player.name} saw a red guard in front of a door`)
           world.lookedOnTheLeft = true
           drawGuard(room2, 'red')
-          updateLocalData()
+          world.updateLocalData()
           resolve()
         }, 1000)
       }),
@@ -557,7 +365,7 @@ const main = () => {
           say(`${player.name} saw a blue guard in front of a door`)
           world.lookedOnTheRight = true
           drawGuard(room2, 'blue')
-          updateLocalData()
+          world.updateLocalData()
           resolve()
         }, 1000)
       }),
@@ -576,7 +384,7 @@ const main = () => {
         setTimeout(() => {
           say(`${player.name} found a strong door at the end of the corridor`)
           world.isBronzeDoorFound = true
-          updateLocalData()
+          world.updateLocalData()
           resolve()
         }, 1000)
       }),
@@ -612,7 +420,7 @@ const main = () => {
               break
             case 2:
               if (world.cookedMeals.pasta === 0) {
-                say(`Guard : Hi my friend, I'm hungry, don't you ? I feel like eating pastas ...`)
+                say(`Guard : Hi my friend, I'm back, yet I'm hungry ! I feel like eating pastas ...`)
               }
               else {
                 say(`Guard : Hi my friend, do you really have cooked some pasta ?? Thank you for this plate ! (${player.name} gave a plate of pasta to the guard)`)
@@ -648,7 +456,7 @@ const main = () => {
             default:
               say(`Guard : Come later, I'm busy.`)
           }
-          updateLocalData()
+          world.updateLocalData()
           resolve()
         }, 1000)
       }),
@@ -714,7 +522,7 @@ const main = () => {
             default:
               say(`Guard : Come later, I'm busy.`)
           }
-          updateLocalData()
+          world.updateLocalData()
           resolve()
         }, 1000)
       }),
@@ -754,7 +562,7 @@ const main = () => {
           world.guards.vestiary.sport = 1
           world.isRoom4Found = true
           //drawMap(world)
-          updateLocalData()
+          world.updateLocalData()
           resolve()
         }, 2000)
       }),
@@ -773,7 +581,7 @@ const main = () => {
         setTimeout(() => {
           say(`${player.name} found some silver coins`)
           world.isSilverCoinFound = true
-          updateLocalData()
+          world.updateLocalData()
           resolve()
         }, 3000)
       }),
@@ -798,7 +606,7 @@ const main = () => {
           else {
             say(`${player.name} found nothing interresting`)
           }
-          updateLocalData()
+          world.updateLocalData()
           resolve()
         }, 2000)
       }),
@@ -834,7 +642,7 @@ const main = () => {
         setTimeout(() => {
             say(`${player.name} cooked a plate of pastas`)
             world.cookedMeals.pasta ++
-          updateLocalData()
+          world.updateLocalData()
           resolve()
         }, 2000)
       }),
@@ -851,7 +659,7 @@ const main = () => {
         setTimeout(() => {
             say(`${player.name} cooked a burger`)
             world.cookedMeals.burger ++
-          updateLocalData()
+          world.updateLocalData()
           resolve()
         }, 2000)
       }),
@@ -869,7 +677,7 @@ const main = () => {
         setTimeout(() => {
             say(`${player.name} cooked a cake`)
             world.cookedMeals.cake ++
-          updateLocalData()
+          world.updateLocalData()
           resolve()
         }, 2000)
       }),
@@ -887,7 +695,7 @@ const main = () => {
         setTimeout(() => {
           say(`${player.name} cooked the special meal.`)
           world.cookedMeals.specialMeal = 1
-          updateLocalData()
+          world.updateLocalData()
           resolve()
         }, 3000)
       }),
@@ -916,7 +724,7 @@ const main = () => {
             say(`${player.name} found a small box locked with a code`)
             world.isSmallBoxFound = true
           }
-          updateLocalData()
+          world.updateLocalData()
           resolve()
         }, 2000)
       }),
@@ -938,7 +746,7 @@ const main = () => {
           world.isRoom7Found = true
           world.isBackDoorFound = true
           //drawMap(world)
-          updateLocalData()
+          world.updateLocalData()
           resolve()
         }, 2000)
       }),
@@ -955,7 +763,7 @@ const main = () => {
         say(`${player.name} tries to open the door ...`)
         setTimeout(() => {
           say(`But the door is locked and a security card is required to open it.`)
-          updateLocalData()
+          world.updateLocalData()
           resolve()
         }, 2000)
       }),
@@ -981,7 +789,7 @@ const main = () => {
             say(`${player.name} activated a secret mechanism and opened a trapped door in the library !`)
             world.isTrappedDoorFound = true
           }
-          updateLocalData()
+          world.updateLocalData()
           resolve()
         }, 1500)
       }),
@@ -1000,7 +808,7 @@ const main = () => {
           say(`${player.name} found the book (referenced in the post-it note) !`)
           world.isSpecialCookingBookFound = true
           world.isPostItUsed = true
-          updateLocalData()
+          world.updateLocalData()
           resolve()
         }, 2500)
       }),
@@ -1033,7 +841,7 @@ const main = () => {
               world.isPictureFound = true
             }
           } 
-          updateLocalData()
+          world.updateLocalData()
           resolve()
         }, 2000)
       }),
@@ -1059,7 +867,7 @@ const main = () => {
         setTimeout(() => {
           say(`${player.name} found a gold coin in a drawer !`)
           world.isGoldCoinFound = true
-          updateLocalData()
+          world.updateLocalData()
           background.classList.remove('trapped-door')
           resolve()
         }, 15000)
@@ -1084,7 +892,7 @@ const main = () => {
             say(`${player.name} saw a portal behind the place where the guard was just before.`)
           }
           world.isGoldenDoorFound = true
-          updateLocalData()
+          world.updateLocalData()
           resolve()
         }, 1000)
       }),
@@ -1120,7 +928,7 @@ const main = () => {
                 world.isGoldenKeyFound = true
               }
           }
-          updateLocalData()
+          world.updateLocalData()
           resolve()
         }, 1500)
       }),
@@ -1139,7 +947,7 @@ const main = () => {
           say(`${player.name} escaped and won the game ! 🎉`)
           setTimeout(() => {
             world.playerWon = true
-            updateLocalData()
+            world.updateLocalData()
             resolve()
           }, 500)
         }),
@@ -1160,7 +968,7 @@ const main = () => {
     isUsed: () => false,
     callback: () => 
       new Promise((resolve) => {
-        openNoteBook(world, updateLocalData)
+        openNoteBook(world)
         resolve()
       })
   })
@@ -1180,7 +988,7 @@ const main = () => {
             //drawMap(world)
             clearActions()
             addEnabledActions(world)
-            updateLocalData()
+            world.updateLocalData()
           } else {
             say(`But the key didn't work on this door ...`)
           }
@@ -1196,7 +1004,7 @@ const main = () => {
     callback: () => 
       new Promise((resolve) => {
         say(`${player.name} reads the letter ...`)
-        alert('letter gives enigma for code 1234')
+        displayLetterModal()
         resolve()
       })
   })
@@ -1215,7 +1023,7 @@ const main = () => {
             world.isSilverCoinUsed = true
             clearActions()
             addEnabledActions(world)
-            updateLocalData()
+            world.updateLocalData()
           } else {
             say(`These coins are useless in this situation ...`)
           }
@@ -1239,7 +1047,7 @@ const main = () => {
             //drawMap(world)
             clearActions()
             addEnabledActions(world)
-            updateLocalData()
+            world.updateLocalData()
           } else {
             say(`The bronze key is not useful in this room ...`)
           }
@@ -1256,11 +1064,8 @@ const main = () => {
       new Promise((resolve) => {
         say(`${player.name} opens the small box ...`)
         setTimeout(() => {
-          alert('add a modal to ask the code 1234 to player')
-          say(`A document with on enigma was in the small box found in the Kitchen.`)
-          world.isSmallBoxUsed = true
-          world.isLetterUsed = true
-          updateLocalData()
+          displayCodeModal(world, "kitchen")
+          world.updateLocalData()
           resolve()
         }, 500)
       }),
@@ -1274,7 +1079,7 @@ const main = () => {
       new Promise((resolve) => {
         setTimeout(() => {
           say(`${player.name} reads the enigma ...`)
-          alert('enigma gives the code 5678')
+          displayEnigmaModal()
           resolve()
         }, 500)
       }),
@@ -1293,7 +1098,7 @@ const main = () => {
             world.isCookingBookUsed = true
             clearActions()
             addEnabledActions(world)
-            updateLocalData()
+            world.updateLocalData()
           } else {
             say(`This is a cooking book with common recipes.`)
           }
@@ -1367,7 +1172,7 @@ const main = () => {
             world.guards.outdoor.specialMeal = 1
             clearActions()
             addEnabledActions(world)
-            updateLocalData()
+            world.updateLocalData()
             resolve()
           }, 3000)
         }
@@ -1389,7 +1194,7 @@ const main = () => {
           world.isSpecialCookingBookUsed = true
           clearActions()
           addEnabledActions(world)
-          updateLocalData()
+          world.updateLocalData()
         }
         else {
           say(`${player.name} needs to be in the Kitchen to learn cooking ...`)
@@ -1405,12 +1210,8 @@ const main = () => {
     callback: () => 
       new Promise((resolve) => {
         say(`${player.name} tries a code ...`)
-        alert('modal to ask the code 5678 to the player')
-        say(`${player.name} found a security card inside the code locker !`)
-        world.isEnigmaUsed = true
-        world.isCodeLockerUsed = true
-        world.isSecurityCardFound = true
-        updateLocalData()
+        displayCodeModal(world, "library")
+        world.updateLocalData()
         resolve()
       }),
   })
@@ -1451,7 +1252,7 @@ const main = () => {
             world.guards.outdoor.goldCoins = 1
             clearActions()
             addEnabledActions(world)
-            updateLocalData()
+            world.updateLocalData()
             resolve()
           }, 2000)
         } else {
@@ -1475,7 +1276,7 @@ const main = () => {
             world.isGoldenKeyUsed = true
             clearActions()
             addEnabledActions(world)
-            updateLocalData()
+            world.updateLocalData()
           } else {
             say(`But the key was useless in this room ...`)
           }
@@ -1485,9 +1286,7 @@ const main = () => {
   })
 
   // Configuration of the parameters
-  playerButton.onclick = () => askPlayerName(player, updateLocalData)
-  resetButton.onclick = () => resetGame()
-  pauseButton.onclick = () => console.log('pause')
+  initializeParameters(world)
 
   // Beginning of the scenario ...
   if (!jsonData) {
@@ -1499,7 +1298,7 @@ const main = () => {
     addEnabledItems(world)
     drawMap(world)
   }
-  updateLocalData()
+  world.updateLocalData()
 }
 
 void main()

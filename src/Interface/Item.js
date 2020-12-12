@@ -78,24 +78,24 @@ export const clearItems = (world) => {
 }
 
 
-export const closeNoteBook = (world, callback) => {
+export const closeNoteBook = (world) => {
     world.notes = writtenNotes.value
     noteBookModal.style.display = 'none'
-    callback()
+    world.updateLocalData()
   }
 
-export const openNoteBook = (world, callback) => {
+export const openNoteBook = (world) => {
   noteBookModal.style.display = 'block'
   writtenNotes.value = world.notes
   closeNoteBookModal.onclick = () => {
-    closeNoteBook(world, callback)
+    closeNoteBook(world)
   }
   saveNotes.onclick = () => {
-    closeNoteBook(world, callback)
+    closeNoteBook(world)
   }
   window.onclick = (event) => {
     if (event.target == noteBookModal) {
-      closeNoteBook(world, callback)
+      closeNoteBook(world)
     }
   }
   
