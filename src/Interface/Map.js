@@ -229,7 +229,7 @@ export const askPlayerName = (player, callback = undefined) => {
       alertEmptyPlayerName.style.display = 'none'
       player.name = playerName.value
       callback?callback():{};
-      playerName.removeEventListener('keyup', pressEnterListener)
+      playerName.removeEventListener('keydown', pressEnterListener)
       erasePlayer(player)
       drawPlayer(player)
       return
@@ -254,7 +254,7 @@ export const askPlayerName = (player, callback = undefined) => {
       checkPlayerName()
     }
   }
-  playerName.addEventListener('keyup', pressEnterListener)
+  playerName.addEventListener('keydown', pressEnterListener)
 }
 
 /**

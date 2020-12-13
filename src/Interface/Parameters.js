@@ -2,6 +2,7 @@ const playerButton = document.getElementById('parameter-player-button')
 const resetButton = document.getElementById('parameter-reset-button')
 const pauseButton = document.getElementById('parameter-pause-button')
 const displayHistoryButton = document.getElementById('parameter-history-button')
+const helpButton = document.getElementById('help-button')
 const helpEnigma = document.getElementById('help-enigma-icon')
 const helpEnigmaText = document.getElementById('help-enigma')
 const enigmaModal = document.getElementById('enigma-modal')
@@ -22,6 +23,9 @@ const historyModal = document.getElementById('history-modal')
 const historyText = document.getElementById('game-history')
 const hitoryCloseModal = document.getElementById('close-history-modal')
 const historyConfirmButton = document.getElementById('history-confirm-button')
+const helpModal = document.getElementById('help-modal')
+const helpCloseModal = document.getElementById('close-help-modal')
+const helpConfirmButton = document.getElementById('help-confirm-button')
 
 import { World } from '../Game/World'
 import { say } from './Text'
@@ -40,7 +44,7 @@ const checkCode = (world, roomName) => {
         codeModal.style.display = 'none'
         wrongCodeAlert.style.display = 'none'
         codeInput.removeEventListener('keyup', pressEnterListener)
-        say(`${world.player.name} found a security card inside the code locker !`)
+        say(world, `${world.player.name} found a security card inside the code locker !`)
         world.isEnigmaUsed = true
         world.isCodeLockerUsed = true
         world.isSecurityCardFound = true
@@ -59,7 +63,7 @@ const checkCode = (world, roomName) => {
       codeModal.style.display = 'none'
       wrongCodeAlert.style.display = 'none'
       codeInput.removeEventListener('keyup', pressEnterListener)
-      say(`${world.player.name} found an enigma in the small box found in the Kitchen.`)
+      say(world, `${world.player.name} found an enigma in the small box found in the Kitchen.`)
       world.isSmallBoxUsed = true
       world.isLetterUsed = true
       clearItems(world)
@@ -102,6 +106,7 @@ export const initializeParameters = (world) => {
     historyText.innerText = world.history
     historyModal.style.display = 'block'
   }
+  helpButton.onclick = () => helpModal.style.display = 'block'
 
   // Timer modal
   timerCloseModal.onclick = () => {
@@ -115,15 +120,15 @@ export const initializeParameters = (world) => {
 
   // Other button configuration
   // Ask code modal
-  closeCodeModal.onclick = () => codeModal.style.display='none'
+  closeCodeModal.onclick = () => codeModal.style.display = 'none'
   
   // Letter modal
-  closeLetterModal.onclick = () => letterModal.style.display='none'
-  letterConfirmButton.onclick = () => letterModal.style.display='none'
+  closeLetterModal.onclick = () => letterModal.style.display = 'none'
+  letterConfirmButton.onclick = () => letterModal.style.display = 'none'
 
   // Enigma modal
-  closeEnigmaModal.onclick = () => enigmaModal.style.display='none'
-  enigmaConfirmButton.onclick = () => enigmaModal.style.display='none'
+  closeEnigmaModal.onclick = () => enigmaModal.style.display = 'none'
+  enigmaConfirmButton.onclick = () => enigmaModal.style.display = 'none'
   helpEnigma.onclick = () => {
       if (helpEnigmaText.style.display === 'block')
         helpEnigmaText.style.display = 'none'
@@ -135,4 +140,8 @@ export const initializeParameters = (world) => {
   // History modal
   hitoryCloseModal.onclick = () => historyModal.style.display = 'none'
   historyConfirmButton.onclick = () => historyModal.style.display = 'none'
+
+  // Help modal
+  helpCloseModal.onclick = () => helpModal.style.display = 'none'
+  helpConfirmButton.onclick = () => helpModal.style.display = 'none'
 }

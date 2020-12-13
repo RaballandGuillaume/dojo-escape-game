@@ -360,6 +360,31 @@ body {
   height: 80%;
 }
 
+/* modal with image to improve ! */
+.image-modal-body {
+  top: 5%;
+  left: 10%;
+  height: 90%;
+  width: 80%;
+}
+
+.image-text-modal {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+  height: 90%;
+}
+
+.modal-image {
+  margin: auto auto;
+  height: 300px;
+}
+
+#ui-help-text {
+  display: none;
+}
+
 #inventory {
   margin: 1rem;
   text-align: center;

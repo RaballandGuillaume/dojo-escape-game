@@ -48,6 +48,9 @@
             <button type="button" class="parameter-button" id="parameter-history-button">
               <img class="parameter-icon" src="./icons/notes.png">
             </button>
+            <button type="button" class="parameter-button" id="help-button">
+              <img class="parameter-icon" src="./icons/question-mark.png">
+            </button>
           </div>
         </div>
 
@@ -55,6 +58,27 @@
     </div>
 
     <!-- Modals -->
+    <div class="modal" id="help-modal">
+      <div class="modal-body image-modal-body">
+        <span class="close-modal" id="close-help-modal">&times;</span>
+        <h2 class="modal-title">Escape Game - How to play</h2>
+        <div class="image-text-modal" id="help-modal-group">
+          <div>
+            <img class="modal-image" src="./images/ui-help.png">
+            <p id="ui-help-text">To play this escape game, you can do actions to collect items and enable other actions. 
+              To use the items, open the inventory and click on them. Items that have already been used and are not useful anymore can't be used again.
+              If the items are not used at the right place and/or at the right moment, they are still available (you will only get a message saying that the item is useless in the current situation).
+              On the map, you can see the doors in the room where the player is (if you found them), and see if they are closed or opened.
+              You can also see guards when they are in the same room as the player. 
+              Sometimes, you need specific actions or items to go further in the game. 
+              If you think you are blocked, just think again and search with care rooms, actions and items to unlock the situation ...
+            </p>
+          </div>
+          <button type="submit" class="confirm-button" id="help-confirm-button">Play</button>
+        </div>
+      </div>
+    </div>
+
     <div class="modal" id="ask-player-name-modal">
       <div class="modal-body">
         <span class="close-modal" id="close-player-name-modal">&times;</span>
