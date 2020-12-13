@@ -295,7 +295,6 @@ export const drawGuard = (room, color) => {
   if (color === 'darkgreen') {
     guardXPos = room.xPos * scaling + playerSize * scaling + 5
     guardYPos = (room.yPos + room.height * 1 / 2) * scaling
-    console.log(guardXPos, guardYPos)
   }
   mapContext.beginPath()
   mapContext.arc(

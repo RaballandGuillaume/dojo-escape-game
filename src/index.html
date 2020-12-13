@@ -22,6 +22,7 @@
           
         </div>
         <div class="secondary-container">
+          
           <h2 id='actions-title'>Actions in this room</h2>
           <div class="actions" id="actions"></div>
           <div id="inventory">
@@ -30,13 +31,18 @@
           </div>
         </div>
           
-        
-        <div id="parameters">
-          <button type="button" class="parameter-button" id="parameter-player-button">Player</button>
-          <button type="button" class="parameter-button" id="parameter-reset-button">Reset</button>
-          <button type="button" class="parameter-button" id="parameter-pause-button">Pause</button>
-          <button type="button" class="parameter-button" id="parameter-sound-button">Sound</button>
+        <div id="parameters-container">
+          <div class="display-time">
+            <h3 class="time" id="title-time">--:--:--</h3>
+          </div>
+          <div id="parameters">
+            <button type="button" class="parameter-button" id="parameter-player-button">Player</button>
+            <button type="button" class="parameter-button" id="parameter-reset-button">Reset</button>
+            <button type="button" class="parameter-button" id="parameter-pause-button">Pause</button>
+            <button type="button" class="parameter-button" id="parameter-sound-button">Sound</button>
+          </div>
         </div>
+
       </div>
     </div>
 
@@ -121,6 +127,20 @@
           <input type="text" minlength=2 maxlength=2 class="modal-input" id="code-input" value="05">
           <p class="alert-message" id="wrong-code-alert">This is not the right code !</p>
           <button type="submit" class="confirm-button" id="code-confirm-button">Try this code</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal" id="timer-paused-modal">
+      <div class="modal-body">
+        <span class="close-modal" id="close-timer-paused-modal">&times;</span>
+        <h2 class="modal-title">Game is paused</h2>
+        <div id="timer-modal-group">
+          <div class="display-time">
+            <h3 class="time" id="timer-modal-time">00:00:00</h3>
+          </div>
+          <p class="game-info" id="timer-information">Press Play or close this message to play</p>
+          <button type="submit" class="confirm-button" id="timer-confirm-button">Play</button>
         </div>
       </div>
     </div>

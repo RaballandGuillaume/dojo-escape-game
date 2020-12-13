@@ -77,13 +77,20 @@ export const clearItems = (world) => {
   world.openInventory = false
 }
 
-
+/**
+ * Close the modal with the notes
+ * @param {World} world
+ */
 export const closeNoteBook = (world) => {
     world.notes = writtenNotes.value
     noteBookModal.style.display = 'none'
     world.updateLocalData()
   }
 
+/**
+ * Open the modal with the notes stored in local storage
+ * @param {World} world
+ */
 export const openNoteBook = (world) => {
   noteBookModal.style.display = 'block'
   writtenNotes.value = world.notes

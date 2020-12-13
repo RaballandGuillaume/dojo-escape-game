@@ -6,6 +6,7 @@ import { clearActions, addEnabledActions } from '../Interface/Action'
 import { Item } from './Item'
 import { clearItems, addEnabledItems } from '../Interface/Item'
 import { say } from '../Interface/Text'
+import Timer from './Timer'
 
 // Custom JSON.parse and JSON.stringify functions to manage serializing functions in JSON data
 var JSONfn;
@@ -49,6 +50,7 @@ export class World {
   items = []
 
   constructor(name) {
+    this.timer = new Timer(this)
     this.name = name
     this.notes = ''
     this.isIronDoorOpened = false
@@ -301,9 +303,11 @@ export class World {
     return item
   }
 
-  // reset world parameters => check if this section is the same as the default world parameters
+  /**
+   * Reset all parameters to restart the game
+   */
   resetGame = () => {
-    if (!this.playerWon) {
+    if (!this.playerWon) { // because actions and items hava already been cleared if player has won
       clearItems(this)
     }
     this.notes = ''
@@ -377,8 +381,13 @@ export class World {
     this.updateLocalData()
   }
 
+  /**
+   * Add all enabled items for current state /!\ alla parameters are set one by one because functions can't
+   * @param {Object} jsonData - world data stored as a json object in local storage
+   */
   getDataFromLocalStorage = (jsonData) => {
     const data = JSONfn.parse(jsonData)
+    this.timer = new Timer(this)
     this.notes = data.world.notes
     this.isIronDoorOpened = data.world.isIronDoorOpened
     this.isIronKeyFound = data.world.isIronKeyFound
@@ -454,6 +463,7 @@ export class World {
         return
       }
     })
+    this.timer.play(this, data.world.timer.time)
   }
 
   updateLocalData = () => {
@@ -462,6 +472,7 @@ export class World {
     }
     const jsonData = JSONfn.stringify(data)
     localStorage.setItem('dojoEscapeGameData', jsonData)
+    console.log('saved')
   }
 
   beginningAction = () => {
@@ -470,6 +481,7 @@ export class World {
       say(`${this.player.name} wakes up in the cell ...`)
       addEnabledActions(this)
       clearItems(this)
+      this.timer.play(this, 0)
     }, 1000)
   }
 }

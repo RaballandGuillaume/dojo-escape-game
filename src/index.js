@@ -121,7 +121,7 @@ const main = () => {
       callback: () =>
         new Promise((resolve) => {
           setTimeout(() => {
-            say(`${player.name} sees a lot of stuffs in the boxes`)
+            say(`${player.name} sees a lot of stuff in the boxes`)
             world.updateLocalData()
             resolve()
           }, 500)
@@ -515,7 +515,7 @@ const main = () => {
               say(`Guard : Thanks for the food ! But It won't be enough to let you go in the library ahah ...`) // give a silver coin to pass
               break
             case 4:
-              say(`Guard : Ok, you are goot at bargaining ... I'll leave and let you enter the library ! (The guard leaves the corridor)`)
+              say(`Guard : Ok, you are good at bargaining ... I'll leave and let you enter the library ! (The guard leaves the corridor)`)
               world.guards.library.chat = -1
               //drawMap(world)
               break
@@ -574,7 +574,7 @@ const main = () => {
   })
 
   world.createAction({
-    text: 'Search in the stuffs here',
+    text: 'Search in the stuff here',
     callback: () =>
       new Promise((resolve) => {
         say(`${player.name} searches something to steal in the boxes ...`)
@@ -594,7 +594,7 @@ const main = () => {
 
   // actions in the room 4
   world.createAction({
-    text: 'Search for interresting stuffs here',
+    text: 'Search for interresting stuff here',
     callback: () =>
       new Promise((resolve) => {
         say(`${player.name} searches ...`)
@@ -693,7 +693,7 @@ const main = () => {
       new Promise((resolve) => {
         say(`${player.name} cooks an awsome traditional meal thanks to the book found in the library ...`)
         setTimeout(() => {
-          say(`${player.name} cooked the special meal.`)
+          say(`${player.name} cooked the traditional meal.`)
           world.cookedMeals.specialMeal = 1
           world.updateLocalData()
           resolve()
@@ -707,10 +707,10 @@ const main = () => {
   })
 
   world.createAction({
-    text: 'Search for interresting stuffs',
+    text: 'Search for interresting thigs',
     callback: () =>
       new Promise((resolve) => {
-        say(`${player.name} search for stuffs in the Kitchen ...`)
+        say(`${player.name} search for stuff in the Kitchen ...`)
         setTimeout(() => {
           if (!world.isCookingBookFound) {
             say(`${player.name} found a cooking book`)
@@ -786,7 +786,7 @@ const main = () => {
             world.booksRead ++
           }
           else {
-            say(`${player.name} activated a secret mechanism and opened a trapped door in the library !`)
+            say(`${player.name} activated a secret mechanism and opened a trap door in the library !`)
             world.isTrappedDoorFound = true
           }
           world.updateLocalData()
@@ -831,7 +831,7 @@ const main = () => {
           }
           else {
             if (world.booksRead < 1) {
-              say(`${player.name} found nothing else that seemed interresting ... ${player.name} should read a book to console yourself :)`)
+              say(`${player.name} found nothing else that seemed interresting ... If I were ${player.name}, I would read a book to console myself :)`)
             }
             else if (world.booksRead < 2) {
               say(`${player.name} found nothing ... ${player.name} SHOULD REALLY READ A BOOK ! ^^`)
@@ -852,12 +852,12 @@ const main = () => {
   })
 
   world.createAction({
-    text: 'Explore the small room behing the trapped door',
+    text: 'Explore the small room behind the trap door',
     callback: () =>
       new Promise((resolve) => {
         const background = document.getElementById('background')
-        background.classList.add('trapped-door')
-        say(`${player.name} goes through the trapped door to see what's in this tiny secret room ...`)
+        background.classList.add('trap-door')
+        say(`${player.name} goes through the trap door to see what's in this tiny secret room ...`)
         setTimeout(() => {
           say(`${player.name} sees some strange paintings on the walls ...`)
         }, 5000)
@@ -868,7 +868,7 @@ const main = () => {
           say(`${player.name} found a gold coin in a drawer !`)
           world.isGoldCoinFound = true
           world.updateLocalData()
-          background.classList.remove('trapped-door')
+          background.classList.remove('trap-door')
           resolve()
         }, 15000)
       }),
@@ -947,6 +947,7 @@ const main = () => {
           say(`${player.name} escaped and won the game ! 🎉`)
           setTimeout(() => {
             world.playerWon = true
+            world.timer.stopTimer()
             world.updateLocalData()
             resolve()
           }, 500)
@@ -1160,7 +1161,7 @@ const main = () => {
         if (player.currentRoom === room7 &&
           world.cookedMeals.specialMeal === 1 &&
           world.guards.outdoor.specialMeal === 0) {
-          say(`${player.name} gives the awsome traditional meal cooked in the Kitchen to the guard outdoor ...`)
+          say(`${player.name} gives the awesome traditional meal cooked in the Kitchen to the guard outdoor ...`)
           setTimeout(() => {
             if (world.guards.outdoor.goldCoins === 0) {
               say(`Guard : Hum, ok this is absolutely delicious, but don't try to corrupt myself with food, I'm not that easy to corrupt !`)
@@ -1177,7 +1178,7 @@ const main = () => {
           }, 3000)
         }
         else {
-          say(`${player.name} has cooked an awsome traditional meal that looks really tasty ! (it can be offered to someone ...)`)
+          say(`${player.name} has cooked an awesome traditional meal that looks really tasty ! (it can be offered to someone ...)`)
           resolve()
         }
       }),
@@ -1222,7 +1223,7 @@ const main = () => {
     isUsed: () => false,
     callback: () => 
       new Promise((resolve) => {
-        say(`This security card may be very useful to escape this labyrinth !`)
+        say(`This security card may be very useful to escape this maze !`)
         resolve()
       }),
   })
@@ -1269,16 +1270,16 @@ const main = () => {
     isUsed: () => world.isGoldenKeyUsed,
     callback: () => 
       new Promise((resolve) => {
-        say(`${player.name} tries to use the big key ...`)
+        say(`${player.name} takes the big key ...`)
         setTimeout(() => {
-          if (player.currentRoom === room7) {
+          if (player.currentRoom === room7 && world.isGoldenDoorFound) {
             say(`${player.name} opened the portal outdoor and found the exit !`)
             world.isGoldenKeyUsed = true
             clearActions()
             addEnabledActions(world)
             world.updateLocalData()
           } else {
-            say(`But the key was useless in this room ...`)
+            say(`This key may be used somewhere ...`)
           }
           resolve()
         }, 1500)
@@ -1290,7 +1291,7 @@ const main = () => {
 
   // Beginning of the scenario ...
   if (!jsonData) {
-    askPlayerName(player, beginningAction)
+    askPlayerName(player, world.beginningAction)
   }
   if (jsonData) {
     clearActions()

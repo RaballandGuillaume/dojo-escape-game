@@ -30,14 +30,16 @@ body {
 }
 
 .secondary-container {
-  margin-top: 8rem;
+  margin-top: 7rem;
   margin-left: 1rem;
   margin-right: 2rem;
+  margin-right: 6rem;
   text-align: center;
   flex: 1 0 30%;
   background-color: rgba(0, 0, 0, 0.6);
   border-radius: 2rem;
   padding: 1rem;
+  z-index: 2
 }
 
 .actions {
@@ -196,7 +198,8 @@ body {
   left: 0%;
   height: 100%;
   width: 100%;
-  background-color: rgba(0, 0, 0, 0.7)
+  background-color: rgba(0, 0, 0, 0.7);
+  z-index: 1000;
 }
 
 .modal-body {
@@ -382,15 +385,23 @@ body {
   margin: 0.4rem;
 }
 
-#parameters {
-  position: absolute;
+/* parameters */
+#parameters-container {
   display: flex;
-  right: 1.5rem;
-  top: 1.5rem;
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  z-index: 1;
+}
+
+#parameters {
+  display: flex;
+  flex-direction: column;
 }
 
 .parameter-button {
-  margin: 0.4rem;
+  margin-bottom: 1rem;
+  margin-top: 0.5rem;
   padding: 0.4rem;
   border: solid 2px silver;
   border-radius: 50%;
@@ -399,7 +410,7 @@ body {
   background-color: dimgray;
   color: ghostwhite;
   font-weight: bold;
-  box-shadow: 0.2rem;
+  z-index: 3;
 }
 
 .parameter-button:hover {
@@ -412,6 +423,42 @@ body {
 
 .parameter-button:focus {
   outline: none;
+}
+
+/* timer */
+.display-time {
+  background-color: rgba(0, 0, 0, 0.7);
+  width: 10rem;
+  height: 5rem;
+  border-radius: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: 1rem;
+}
+
+.time {
+  color: red;
+  font-size: 2rem;
+  font-weight: bold;
+  text-shadow: 1px 1px 2px ghostwhite;
+}
+
+#timer-modal-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.game-info {
+  font-style: italic;
+}
+
+#timer-confirm-button {
+  width: 10rem;
+  margin-top: 0rem;
 }
 
 /* background images */
@@ -447,7 +494,7 @@ body {
   background-image: url('./images/win.jpg');
 }
 
-.trapped-door {
+.trap-door {
   background-image: url('./images/library_hidden_door.jpg')
 }
 
@@ -460,6 +507,13 @@ body {
 
   .primary-container {
     margin-bottom: 0rem;
+    margin-top: 7rem;
+    margin-right: 4rem;
+    padding-top: 0rem;
+  }
+
+  .title {
+    margin: 1rem;
   }
 
   .secondary-container {

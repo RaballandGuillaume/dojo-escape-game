@@ -15,6 +15,9 @@ const closeCodeModal = document.getElementById('close-code-modal')
 const codeConfirmButton = document.getElementById('code-confirm-button')
 const codeInput = document.getElementById('code-input')
 const wrongCodeAlert = document.getElementById('wrong-code-alert')
+const timerModal = document.getElementById('timer-paused-modal')
+const timerCloseModal = document.getElementById('close-timer-paused-modal')
+const confirmPlayTimer = document.getElementById('timer-confirm-button')
 
 import { World } from '../Game/World'
 import { say } from './Text'
@@ -86,8 +89,21 @@ export const displayCodeModal = (world, roomName) => {
 export const initializeParameters = (world) => {
   // Buttons in parameters
   playerButton.onclick = () => askPlayerName(world.player, world.updateLocalData)
-  resetButton.onclick = () => world.resetGame()
-  pauseButton.onclick = () => console.log('pause')
+  resetButton.onclick = () => {
+    world.timer.stopTimer()
+    world.resetGame()
+  }
+  pauseButton.onclick = () => world.timer.pause()
+
+  // Timer modal
+  timerCloseModal.onclick = () => {
+    timerModal.style.display = 'none'
+    world.timer.play(world, world.timer.time)
+  }
+  confirmPlayTimer.onclick = () => {
+    timerModal.style.display = 'none'
+    world.timer.play(world, world.timer.time)
+  }
 
   // Other button configuration
   // Ask code modal
