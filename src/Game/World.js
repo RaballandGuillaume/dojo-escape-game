@@ -53,6 +53,7 @@ export class World {
     this.timer = new Timer(this)
     this.name = name
     this.notes = ''
+    this.history = ''
     this.isIronDoorOpened = false
     this.isIronKeyFound = false
     this.isIronKeyUsed = false
@@ -311,6 +312,7 @@ export class World {
       clearItems(this)
     }
     this.notes = ''
+    this.history = ''
     this.isIronDoorOpened = false
     this.isIronKeyFound = false
     this.isIronKeyUsed = false
@@ -389,6 +391,7 @@ export class World {
     const data = JSONfn.parse(jsonData)
     this.timer = new Timer(this)
     this.notes = data.world.notes
+    this.history = data.world.history
     this.isIronDoorOpened = data.world.isIronDoorOpened
     this.isIronKeyFound = data.world.isIronKeyFound
     this.isIronKeyUsed = data.world.isIronKeyUsed
@@ -472,16 +475,15 @@ export class World {
     }
     const jsonData = JSONfn.stringify(data)
     localStorage.setItem('dojoEscapeGameData', jsonData)
-    console.log('saved')
   }
 
   beginningAction = () => {
     clearActions()
     setTimeout(() => {
-      say(`${this.player.name} wakes up in the cell ...`)
+      this.timer.play(this, 0)
+      say(this, `${this.player.name} wakes up in the cell ...`)
       addEnabledActions(this)
       clearItems(this)
-      this.timer.play(this, 0)
     }, 1000)
   }
 }

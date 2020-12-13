@@ -36,10 +36,18 @@
             <h3 class="time" id="title-time">--:--:--</h3>
           </div>
           <div id="parameters">
-            <button type="button" class="parameter-button" id="parameter-player-button">Player</button>
-            <button type="button" class="parameter-button" id="parameter-reset-button">Reset</button>
-            <button type="button" class="parameter-button" id="parameter-pause-button">Pause</button>
-            <button type="button" class="parameter-button" id="parameter-sound-button">Sound</button>
+            <button type="button" class="parameter-button" id="parameter-player-button">
+              <img class="parameter-icon" src="./icons/user.png">
+            </button>
+            <button type="button" class="parameter-button" id="parameter-reset-button">
+              <img class="parameter-icon" src="./icons/update-arrow.png">
+            </button>
+            <button type="button" class="parameter-button" id="parameter-pause-button">
+              <img class="parameter-icon" src="./icons/pause.png">
+            </button>
+            <button type="button" class="parameter-button" id="parameter-history-button">
+              <img class="parameter-icon" src="./icons/notes.png">
+            </button>
           </div>
         </div>
 
@@ -50,7 +58,7 @@
     <div class="modal" id="ask-player-name-modal">
       <div class="modal-body">
         <span class="close-modal" id="close-player-name-modal">&times;</span>
-        <h2 class="modal-title">Choose the name of your player to begin</h2>
+        <h2 class="modal-title">Choose the name of your player</h2>
         <div id="ask-player-name-modal-group">
           <div class="input-group">
             <label class="modal-input-label" for="new-player-name">Name : </label>
@@ -141,6 +149,19 @@
           </div>
           <p class="game-info" id="timer-information">Press Play or close this message to play</p>
           <button type="submit" class="confirm-button" id="timer-confirm-button">Play</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal" id="history-modal">
+      <div class="enigma-modal-body" id="history-modal-body">
+        <span class="close-modal" id="close-history-modal">&times;</span>
+        <h2 class="modal-title">Game history</h2>
+        <div class="enigma-modal-group" id="history-modal-group">
+          <div class="enigma-body" id="history-body">
+            <p class="enigma-text" id="game-history">History</p>
+          </div>
+          <button type="submit" class="confirm-button enigma-confirm-button" id="history-confirm-button">Ok</button>
         </div>
       </div>
     </div>

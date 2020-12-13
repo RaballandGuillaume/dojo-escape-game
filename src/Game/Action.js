@@ -32,7 +32,7 @@ export class MoveAction extends Action {
       ...actionConfig,
       callback: () => {
         player.move(wantedRoom, actionConfig.world)
-        say(`${player.name} moves to ${wantedRoom.name}`)
+        say(actionConfig.world, `${player.name} moves to ${wantedRoom.name}`)
         return actionConfig.callback()
       },
     })

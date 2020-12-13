@@ -1,7 +1,7 @@
 const playerButton = document.getElementById('parameter-player-button')
 const resetButton = document.getElementById('parameter-reset-button')
 const pauseButton = document.getElementById('parameter-pause-button')
-const soundButton = document.getElementById('parameter-sound-button')
+const displayHistoryButton = document.getElementById('parameter-history-button')
 const helpEnigma = document.getElementById('help-enigma-icon')
 const helpEnigmaText = document.getElementById('help-enigma')
 const enigmaModal = document.getElementById('enigma-modal')
@@ -18,6 +18,10 @@ const wrongCodeAlert = document.getElementById('wrong-code-alert')
 const timerModal = document.getElementById('timer-paused-modal')
 const timerCloseModal = document.getElementById('close-timer-paused-modal')
 const confirmPlayTimer = document.getElementById('timer-confirm-button')
+const historyModal = document.getElementById('history-modal')
+const historyText = document.getElementById('game-history')
+const hitoryCloseModal = document.getElementById('close-history-modal')
+const historyConfirmButton = document.getElementById('history-confirm-button')
 
 import { World } from '../Game/World'
 import { say } from './Text'
@@ -94,6 +98,10 @@ export const initializeParameters = (world) => {
     world.resetGame()
   }
   pauseButton.onclick = () => world.timer.pause()
+  displayHistoryButton.onclick = () => {
+    historyText.innerText = world.history
+    historyModal.style.display = 'block'
+  }
 
   // Timer modal
   timerCloseModal.onclick = () => {
@@ -112,6 +120,7 @@ export const initializeParameters = (world) => {
   // Letter modal
   closeLetterModal.onclick = () => letterModal.style.display='none'
   letterConfirmButton.onclick = () => letterModal.style.display='none'
+
   // Enigma modal
   closeEnigmaModal.onclick = () => enigmaModal.style.display='none'
   enigmaConfirmButton.onclick = () => enigmaModal.style.display='none'
@@ -122,4 +131,8 @@ export const initializeParameters = (world) => {
         helpEnigmaText.style.display = 'block'
       }
   }
+
+  // History modal
+  hitoryCloseModal.onclick = () => historyModal.style.display = 'none'
+  historyConfirmButton.onclick = () => historyModal.style.display = 'none'
 }

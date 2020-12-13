@@ -2,13 +2,12 @@ const timerModal = document.getElementById('timer-paused-modal')
 const displayTimeModal = document.getElementById('timer-modal-time')
 const displayTimeTitle = document.getElementById('title-time')
 
-const formatTime = (time) => {
+export const formatTime = (time) => {
     var hours = (time - time % 3600) / 3600
     var minutes = time - hours * 3600
     minutes = (minutes - minutes % 60) / 60
     var seconds = time - minutes * 60
     const formattedTime = formatNumber(hours) + ':' + formatNumber(minutes) + ':' + formatNumber(seconds)
-    console.log(hours,minutes,seconds)
     return formattedTime
 }
 

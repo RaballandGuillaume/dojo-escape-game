@@ -9,6 +9,7 @@ export default class Timer {
 
     /**
      * Play the timer and display the time
+     * @param {World} world - the world calling the timer
      * @param {number} time - the time to start from, in ms
      */
     play = (world, time = 0) => {
@@ -34,6 +35,7 @@ export default class Timer {
 
     /**
      * @private
+     * @param {World} - the world calling the timer
      */
     runTimer = (world) => {
         this.time ++
