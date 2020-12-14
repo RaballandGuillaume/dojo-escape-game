@@ -68,7 +68,6 @@ const checkCode = (world, roomName) => {
       codeInput.removeEventListener('keyup', pressEnterListener)
       say(world, `${world.player.name} found an enigma in the small box found in the Kitchen.`)
       world.isSmallBoxUsed = true
-      world.isLetterUsed = true
       clearItems(world)
       addEnabledItems(world)
       world.updateLocalData()
@@ -117,11 +116,15 @@ export const initializeParameters = (world) => {
   // Timer modal
   timerCloseModal.onclick = () => {
     timerModal.style.display = 'none'
-    world.timer.play(world, world.timer.time)
+    if (!world.playerWon) {
+      world.timer.play(world, world.timer.time)
+    }
   }
   confirmPlayTimer.onclick = () => {
     timerModal.style.display = 'none'
-    world.timer.play(world, world.timer.time)
+    if (!world.playerWon) {
+      world.timer.play(world, world.timer.time)
+    }
   }
 
   // Other button configuration
@@ -150,11 +153,15 @@ export const initializeParameters = (world) => {
   // Help modal
   helpCloseModal.onclick = () => {
     helpModal.style.display = 'none'
-    world.timer.play(world, world.timer.time)
+    if (!world.playerWon) {
+      world.timer.play(world, world.timer.time)
+    }
   }
   helpConfirmButton.onclick = () => {
     helpModal.style.display = 'none'
-    world.timer.play(world, world.timer.time)
+    if (!world.playerWon) {
+      world.timer.play(world, world.timer.time)
+    }
   }
   moreHelpButton.onclick = () => {
     if (helpText.style.display === 'block') {

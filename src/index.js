@@ -831,10 +831,13 @@ const main = () => {
           }
           else {
             if (world.booksRead < 1) {
-              say(world, `${player.name} found nothing else that seemed interesting ... If I were ${player.name}, I would read a book to console myself :)`)
+              say(world, `${player.name} found nothing else that seemed interesting ... If I were ${player.name}, I would read some books to console myself :)`)
             }
             else if (world.booksRead < 2) {
-              say(world, `${player.name} found nothing ... ${player.name} SHOULD REALLY READ A BOOK ! ^^`)
+              say(world, `${player.name} found nothing ... ${player.name} should read another book ! ^^`)
+            }
+            else if (world.booksRead < 3) {
+              say(world, `${player.name} found nothing ... ${player.name} SHOULD REALLY READ ONE MORE BOOK ! :D`)
             }
             else {
               say(world, `${player.name} found an old picture of the guards between the books.`)
@@ -868,9 +871,11 @@ const main = () => {
           say(world, `${player.name} found a gold coin in a drawer !`)
           world.isGoldCoinFound = true
           world.updateLocalData()
+        }, 15000)
+        setTimeout(() => {
           background.classList.remove('trap-door')
           resolve()
-        }, 15000)
+        }, 17000)
       }),
     isEnabled: () => (
       player.currentRoom === room6 &&

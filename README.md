@@ -6,7 +6,8 @@ Ce jeu d'escape game a été réalisé par **Guillaume Raballand** dans le cadre
 
 ## Comment jouer ?
 
-Pour jouer, il suffit de cliquer sur ce lien : [jouer au jeu](https://xenodochial-tesla-1737dd.netlify.app/).
+Pour jouer, il suffit de cliquer sur ce lien : [jouer au jeu](https://xenodochial-tesla-1737dd.netlify.app/). 
+
 NB : *Cette version du jeu est en anglais, mais vous pouvez utiliser le traducteur du navigateur pour jouer en français ...*
 
 ## Instructions
@@ -38,3 +39,7 @@ Autres paramètres (boutons en haut à droite de l'IHM) :
  - Pour aider les joueurs, les objets déjà utilisés à bon escient sont indiqués comme "consommés" et ne sont pas réutilisables.
  - Certaines actions seront toujours disponibles mais ne permettent pas d'avancer dans l'histoire ...
  - De manière générale, si le joueur réalise 4 ou 5 fois la même action en obtenant toujours le même message (qui ne donne aucune information intéressante), c'est qu'il vaut mieux chercher ailleurs pour avancer !
+
+## Sauvegarde
+
+Le jeu est sauvegardé automatiquement en local. On peut reprendre la partie en cours à tout moment, tant que le navigateur n'est pas fermé ou que les données du site ne sont pas supprimées !
