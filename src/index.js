@@ -2,7 +2,7 @@ import { World } from './Game/World'
 import { say } from './Interface/Text'
 import { clearActions, addEnabledActions } from './Interface/Action'
 import { askPlayerName, drawMap, restartDrawMap, drawGuard } from './Interface/Map'
-import { initializeParameters, displayLetterModal, displayEnigmaModal, displayCodeModal } from './Interface/Parameters'
+import { initializeParameters, displayLetterModal, displayEnigmaModal, displayCodeModal, helpModal, helpCloseModal, helpConfirmButton } from './Interface/Parameters'
 import { clearItems, addEnabledItems, openNoteBook } from './Interface/Item'
 
 const main = () => {
@@ -35,7 +35,7 @@ const main = () => {
   })
   var room4 = world.createRoom({ 
     index: 4,
-    name: 'Restrooms',
+    name: 'Restroom',
     xPos: 2,
     yPos: 2,
     isDiscovered: () => world.isRoom4Found
@@ -139,7 +139,7 @@ const main = () => {
   // room 4
   world.createMoveAction(
     {
-      text: 'Go to the Restrooms', 
+      text: 'Go to the Restroom', 
       callback: () =>
         new Promise((resolve) => {
           world.updateLocalData()
@@ -229,7 +229,7 @@ const main = () => {
       new Promise((resolve) => {
         say(world, `${player.name} looks around the room ...`)
         setTimeout(() => {
-          say(world, `${player.name} found a note book on the desk and saw the Corridor throw the door of the Cell`)
+          say(world, `${player.name} found a note book on the desk and saw the Corridor through the door of the Cell`)
           world.isNoteBookFound = true
           world.isRoom2Found = true
           //drawMap(world)
@@ -403,7 +403,7 @@ const main = () => {
         setTimeout(() => {
           switch (world.guards.vestiary.chat) {
             case 0:
-              say(world, `Red Guard : Hello ${player.name}, you can go to the vestiary just behind me, it's open all day long and you can practice sport there.`)
+              say(world, `Red Guard : Hello ${player.name}, you can go to the vestiary just behind me, it's open all day long and you can use it when you practice sport.`)
               world.isRoom3Found = true
               //drawMap(world)
               world.guards.vestiary.chat = 1
@@ -558,7 +558,7 @@ const main = () => {
       new Promise((resolve) => {
         say(world, `Red Guard : Why did you follow me ?`)
         setTimeout(() => {
-          say(world, `Red Guard : Don't steal, please, I'll go running outdoor. However, you can use the restrooms of this vestiary as you want. (the red guard leaves the place for a moment)`)
+          say(world, `Red Guard : Don't steal, please, I'll go running outdoor. However, you can use the restroom of this vestiary as you want. (the red guard leaves the place for a moment)`)
           world.guards.vestiary.sport = 1
           world.isRoom4Found = true
           //drawMap(world)
@@ -594,7 +594,7 @@ const main = () => {
 
   // actions in the room 4
   world.createAction({
-    text: 'Search for interresting stuff here',
+    text: 'Search for interesting stuff here',
     callback: () =>
       new Promise((resolve) => {
         say(world, `${player.name} searches ...`)
@@ -604,7 +604,7 @@ const main = () => {
             world.isBronzeKeyFound = true
           }
           else {
-            say(world, `${player.name} found nothing interresting`)
+            say(world, `${player.name} found nothing interesting`)
           }
           world.updateLocalData()
           resolve()
@@ -707,10 +707,10 @@ const main = () => {
   })
 
   world.createAction({
-    text: 'Search for interresting thigs',
+    text: 'Search for interesting things',
     callback: () =>
       new Promise((resolve) => {
-        say(world, `${player.name} search for stuff in the Kitchen ...`)
+        say(world, `${player.name} searches for stuff in the Kitchen ...`)
         setTimeout(() => {
           if (!world.isCookingBookFound) {
             say(world, `${player.name} found a cooking book`)
@@ -823,7 +823,7 @@ const main = () => {
     text: 'Look around and search the room with care',
     callback: () =>
       new Promise((resolve) => {
-        say(world, `${player.name} searches interresting things in the library ...`)
+        say(world, `${player.name} searches interesting things in the library ...`)
         setTimeout(() => {
           if (!world.isCodeLockerFound) {
             say(world, `${player.name} found a box locked with a code.`)
@@ -831,7 +831,7 @@ const main = () => {
           }
           else {
             if (world.booksRead < 1) {
-              say(world, `${player.name} found nothing else that seemed interresting ... If I were ${player.name}, I would read a book to console myself :)`)
+              say(world, `${player.name} found nothing else that seemed interesting ... If I were ${player.name}, I would read a book to console myself :)`)
             }
             else if (world.booksRead < 2) {
               say(world, `${player.name} found nothing ... ${player.name} SHOULD REALLY READ A BOOK ! ^^`)
@@ -948,6 +948,8 @@ const main = () => {
           setTimeout(() => {
             world.playerWon = true
             world.timer.stopTimer()
+            world.leaderBoard.push([world.timer.time, player.name])
+            console.log("LeaderBoard : " + world.leaderBoard)
             world.updateLocalData()
             resolve()
           }, 500)
@@ -1160,7 +1162,8 @@ const main = () => {
       new Promise((resolve) => {
         if (player.currentRoom === room7 &&
           world.cookedMeals.specialMeal === 1 &&
-          world.guards.outdoor.specialMeal === 0) {
+          world.guards.outdoor.specialMeal === 0 &&
+          world.guards.outdoor.chat > 0) {
           say(world, `${player.name} gives the awesome traditional meal cooked in the Kitchen to the guard outdoor ...`)
           setTimeout(() => {
             if (world.guards.outdoor.goldCoins === 0) {
@@ -1245,7 +1248,8 @@ const main = () => {
       new Promise((resolve) => {
         if (player.currentRoom === room7 &&
           world.isGoldCoinFound &&
-          world.guards.outdoor.goldCoins === 0) {
+          world.guards.outdoor.goldCoins === 0 &&
+          world.guards.outdoor.chat > 0) {
           say(world, `${player.name} gives the gold coin to the guard outdoor ...`)
           setTimeout(() => {
             say(world, `Guard : Ah this coin is made of pure gold ! Thank you for the gift ... we can negociate now ...`)
@@ -1291,8 +1295,10 @@ const main = () => {
 
   // Beginning of the scenario ...
   if (!jsonData) {
+    helpModal.style.display = 'block'
     askPlayerName(player, world.beginningAction)
   }
+
   if (jsonData) {
     clearActions()
     addEnabledActions(world)

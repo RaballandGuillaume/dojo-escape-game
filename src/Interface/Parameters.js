@@ -23,9 +23,12 @@ const historyModal = document.getElementById('history-modal')
 const historyText = document.getElementById('game-history')
 const hitoryCloseModal = document.getElementById('close-history-modal')
 const historyConfirmButton = document.getElementById('history-confirm-button')
-const helpModal = document.getElementById('help-modal')
-const helpCloseModal = document.getElementById('close-help-modal')
-const helpConfirmButton = document.getElementById('help-confirm-button')
+export const helpModal = document.getElementById('help-modal')
+export const helpCloseModal = document.getElementById('close-help-modal')
+export const helpConfirmButton = document.getElementById('help-confirm-button')
+const moreHelpButton = document.getElementById('help-info-button')
+const helpText = document.getElementById('help-text')
+const helpImage = document.getElementById('help-image')
 
 import { World } from '../Game/World'
 import { say } from './Text'
@@ -106,7 +109,10 @@ export const initializeParameters = (world) => {
     historyText.innerText = world.history
     historyModal.style.display = 'block'
   }
-  helpButton.onclick = () => helpModal.style.display = 'block'
+  helpButton.onclick = () => {
+    world.timer.stopTimer()
+    helpModal.style.display = 'block'
+  }
 
   // Timer modal
   timerCloseModal.onclick = () => {
@@ -142,6 +148,22 @@ export const initializeParameters = (world) => {
   historyConfirmButton.onclick = () => historyModal.style.display = 'none'
 
   // Help modal
-  helpCloseModal.onclick = () => helpModal.style.display = 'none'
-  helpConfirmButton.onclick = () => helpModal.style.display = 'none'
+  helpCloseModal.onclick = () => {
+    helpModal.style.display = 'none'
+    world.timer.play(world, world.timer.time)
+  }
+  helpConfirmButton.onclick = () => {
+    helpModal.style.display = 'none'
+    world.timer.play(world, world.timer.time)
+  }
+  moreHelpButton.onclick = () => {
+    if (helpText.style.display === 'block') {
+      helpText.style.display = 'none'
+      helpImage.style.display = 'block';
+    }
+    else {
+      helpText.style.display = 'block'
+      helpImage.style.display = 'none';
+    }
+  }
 }

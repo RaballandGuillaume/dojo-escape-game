@@ -4,9 +4,9 @@ const displayTimeTitle = document.getElementById('title-time')
 
 export const formatTime = (time) => {
     var hours = (time - time % 3600) / 3600
-    var minutes = time - hours * 3600
-    minutes = (minutes - minutes % 60) / 60
-    var seconds = time - minutes * 60
+    var timeTemp = time - hours * 3600
+    var minutes = (timeTemp - timeTemp % 60) / 60
+    var seconds = timeTemp - minutes * 60
     const formattedTime = formatNumber(hours) + ':' + formatNumber(minutes) + ':' + formatNumber(seconds)
     return formattedTime
 }

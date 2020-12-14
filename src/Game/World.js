@@ -51,6 +51,7 @@ export class World {
 
   constructor(name) {
     this.timer = new Timer(this)
+    this.leaderBoard = []
     this.name = name
     this.notes = ''
     this.history = ''
@@ -389,6 +390,7 @@ export class World {
    */
   getDataFromLocalStorage = (jsonData) => {
     const data = JSONfn.parse(jsonData)
+    this.leaderBoard = data.world.leaderBoard
     this.timer = new Timer(this)
     this.notes = data.world.notes
     this.history = data.world.history
@@ -478,6 +480,7 @@ export class World {
   }
 
   beginningAction = () => {
+    this.timer.stopTimer()
     clearActions()
     setTimeout(() => {
       this.timer.play(this, 0)

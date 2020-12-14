@@ -21,7 +21,6 @@ export default class Timer {
      * Pause the timer and display the modal for game paused
      */
     pause = () => {
-        this.playing = false
         this.stopTimer()
         displayPause(this.time)
     }
