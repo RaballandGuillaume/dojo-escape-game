@@ -1023,10 +1023,10 @@ const main = () => {
     callback: () => 
       new Promise((resolve) => {
         setTimeout(() => {
-          if (player.currentRoom === room2 && world.guards.library.chat === 3 && world.guards.library.silverCoins === 0) {
+          if (player.currentRoom === room2 && world.guards.library.chat === 4 && world.guards.library.silverCoins === 0) {
             say(world, `${player.name} gives several silver coins to the blue guard (in front of the Library).`)
             world.guards.library.silverCoins = 1
-            world.guards.library.chat = 4
+            world.guards.library.chat = 5
             world.isSilverCoinUsed = true
             clearActions()
             addEnabledActions(world)
