@@ -4,6 +4,7 @@ import { clearActions, addEnabledActions } from './Interface/Action'
 import { askPlayerName, drawMap, restartDrawMap, drawGuard } from './Interface/Map'
 import { initializeParameters, displayLetterModal, displayEnigmaModal, displayCodeModal, helpModal, helpCloseModal, helpConfirmButton } from './Interface/Parameters'
 import { clearItems, addEnabledItems, openNoteBook } from './Interface/Item'
+import { addToLeaderBoard, displayWinLeaderBoard } from './Interface/LeaderBoard'
 
 const main = () => {
     
@@ -950,7 +951,8 @@ const main = () => {
           setTimeout(() => {
             world.playerWon = true
             world.timer.stopTimer()
-            world.leaderBoard.push([world.timer.time, player.name])
+            addToLeaderBoard(world, [world.timer.time, player.name])
+            displayWinLeaderBoard(world)
             console.log("LeaderBoard : " + world.leaderBoard)
             world.updateLocalData()
             resolve()

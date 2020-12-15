@@ -2,6 +2,7 @@ const playerButton = document.getElementById('parameter-player-button')
 const resetButton = document.getElementById('parameter-reset-button')
 const pauseButton = document.getElementById('parameter-pause-button')
 const displayHistoryButton = document.getElementById('parameter-history-button')
+const displayLeaderBoardButton = document.getElementById('parameter-leaderboard-button')
 const helpButton = document.getElementById('help-button')
 const helpEnigma = document.getElementById('help-enigma-icon')
 const helpEnigmaText = document.getElementById('help-enigma')
@@ -29,11 +30,16 @@ export const helpConfirmButton = document.getElementById('help-confirm-button')
 const moreHelpButton = document.getElementById('help-info-button')
 const helpText = document.getElementById('help-text')
 const helpImage = document.getElementById('help-image')
+const actionsTitle = document.getElementById('actions-title')
+const tryAgainButton = document.getElementById('try-again-button')
+const leaderBoardConfirmButton = document.getElementById('leaderboard-confirm-button')
+const closeLeaderBoardModal = document.getElementById('close-leaderboard-modal')
 
 import { World } from '../Game/World'
 import { say } from './Text'
 import { askPlayerName } from './Map'
 import { addEnabledItems, clearItems } from './Item'
+import { hideWinLeaderBoard, hideLeaderBoardModal, displayLeaderBoardModal } from './LeaderBoard'
 
 /**
  * Check if the code written by the player is the good one
@@ -102,12 +108,15 @@ export const initializeParameters = (world) => {
   resetButton.onclick = () => {
     world.timer.stopTimer()
     world.resetGame()
+    actionsTitle.innerText = 'Actions in this room'
+    hideWinLeaderBoard()
   }
   pauseButton.onclick = () => world.timer.pause()
   displayHistoryButton.onclick = () => {
     historyText.innerText = world.history
     historyModal.style.display = 'block'
   }
+  displayLeaderBoardButton.onclick = () => displayLeaderBoardModal(world)
   helpButton.onclick = () => {
     world.timer.stopTimer()
     helpModal.style.display = 'block'
@@ -173,4 +182,11 @@ export const initializeParameters = (world) => {
       helpImage.style.display = 'none';
     }
   }
+
+  // Try again button (player won the game)
+  tryAgainButton.onclick = () => resetButton.onclick()
+
+  // Leaderboard modal
+  closeLeaderBoardModal.onclick = () => hideLeaderBoardModal()
+  leaderBoardConfirmButton.onclick = () => hideLeaderBoardModal()
 }

@@ -22,8 +22,11 @@
           
         </div>
         <div class="secondary-container">
-          
           <h2 id='actions-title'>Actions in this room</h2>
+          <div class="leaderboard-container" id="leaderboard-win-container">
+            <div class="leaderboard-text" id="leaderboard-win-text"></div>
+            <button type="submit" class="confirm-button" id="try-again-button">Try again</button>
+          </div>
           <div class="actions" id="actions"></div>
           <div id="inventory">
             <p id='inventory-title'>Inventory</p>
@@ -47,6 +50,9 @@
             </button>
             <button type="button" class="parameter-button" id="parameter-history-button" title="Show game history">
               <img class="parameter-icon" src="./icons/notes.png">
+            </button>
+            <button type="button" class="parameter-button" id="parameter-leaderboard-button" title="Show leaderboard">
+              <img class="parameter-icon" id="podium-icon" src="./icons/podium.png">
             </button>
             <button type="button" class="parameter-button" id="help-button" title="Help">
               <img class="parameter-icon" src="./icons/question-mark.png">
@@ -195,6 +201,17 @@
             <p class="enigma-text" id="game-history">History</p>
           </div>
           <button type="submit" class="confirm-button enigma-confirm-button" id="history-confirm-button">Ok</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal" id="leaderboard-modal">
+      <div class="note-book-modal-body" id="leaderboard-modal-body">
+        <span class="close-modal" id="close-leaderboard-modal">&times;</span>
+        <h2 class="modal-title">Leader Board</h2>
+        <div class="leaderboard-container" id="leaderboard-modal-container">
+          <div class="leaderboard-text" id="leaderboard-modal-text"></div>
+          <button type="submit" class="confirm-button" id="leaderboard-confirm-button">Ok</button>
         </div>
       </div>
     </div>

@@ -5,8 +5,10 @@ import { Action, MoveAction, InventoryAction } from './Action'
 import { clearActions, addEnabledActions } from '../Interface/Action'
 import { Item } from './Item'
 import { clearItems, addEnabledItems } from '../Interface/Item'
-import { say } from '../Interface/Text'
+import { say, textElement } from '../Interface/Text'
 import Timer from './Timer'
+import { displayWinLeaderBoard } from '../Interface/LeaderBoard'
+import { displayTime } from '../Interface/Timer'
 
 // Custom JSON.parse and JSON.stringify functions to manage serializing functions in JSON data
 var JSONfn;
@@ -51,6 +53,7 @@ export class World {
 
   constructor(name) {
     this.timer = new Timer(this)
+    this.lastSay = ''
     this.leaderBoard = []
     this.name = name
     this.notes = ''
@@ -390,8 +393,10 @@ export class World {
    */
   getDataFromLocalStorage = (jsonData) => {
     const data = JSONfn.parse(jsonData)
+    this.player.name = data.world.player.name
     this.leaderBoard = data.world.leaderBoard
     this.timer = new Timer(this)
+    this.lastSay = data.world.lastSay
     this.notes = data.world.notes
     this.history = data.world.history
     this.isIronDoorOpened = data.world.isIronDoorOpened
@@ -471,6 +476,11 @@ export class World {
     if (!this.playerWon) {
       this.timer.play(this, data.world.timer.time)
     }
+    if (this.playerWon) {
+      displayWinLeaderBoard(this)
+    }
+    displayTime(data.world.timer.time)
+    textElement.innerHTML = this.lastSay
   }
 
   updateLocalData = () => {
