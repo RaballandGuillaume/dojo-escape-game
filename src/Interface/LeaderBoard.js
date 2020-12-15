@@ -51,7 +51,12 @@ export const hideWinLeaderBoard = () => {
  * @param {World} world - the world that contains the leader board
  */
 export const displayLeaderBoardModal = (world) => {
-  leaderBoardModalText.innerHTML = 'Win at least 1 game to see the leaderboard here'
+  if (world.leaderBoard.length === 0) {
+    leaderBoardModalText.innerHTML = 'Win at least 1 game to see the leaderboard here'
+  }
+  else {
+    leaderBoardModalText.innerHTML = ''
+  }
   for (let k = 0 ; k < world.leaderBoard.length && k < 10 ; k++) {
     const line = world.leaderBoard[k]
     var textLine = '<p>' + String(k+1) + ' - ' + formatTime(line[0]) + ' - ' + line[1] + '</p>'
