@@ -42,4 +42,10 @@ Autres paramètres (boutons en haut à droite de l'IHM) :
 
 ## Sauvegarde
 
-Le jeu est sauvegardé automatiquement en local. On peut reprendre la partie en cours à tout moment, tant que le navigateur n'est pas fermé ou que les données du site ne sont pas supprimées !
+Le jeu est sauvegardé automatiquement en local sur le navigateur utilisé. On peut reprendre la partie en cours à tout moment, tant que le navigateur n'est pas fermé ou que les données du site ne sont pas supprimées !
+
+## Contributeurs
+
+ - **Jeremie Chauvel, François Hendriks** : Initialisation du projet, conception et développement du [moteur de jeu minimal](https://github.com/theodo/dojo-escape-game).
+ - **Guillaume Raballand** : Conception et développement du scénario, de l'IHM et du moteur de jeu final.
+ - **Cyprien Raballand** : Test du jeu et aide à la détection de bugs.

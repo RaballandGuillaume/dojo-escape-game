@@ -377,7 +377,7 @@ const main = () => {
   })
 
   world.createAction({
-    text: 'Go to the end of the corridor',
+    text: 'Walk to the end of the corridor',
     callback: () =>
       new Promise((resolve) => {
         say(world, `${player.name} walks forward to the end of the corridor ...`)
@@ -405,14 +405,12 @@ const main = () => {
             case 0:
               say(world, `Red Guard : Hello ${player.name}, you can go to the vestiary just behind me, it's open all day long and you can use it when you practice sport.`)
               world.isRoom3Found = true
-              //drawMap(world)
               world.guards.vestiary.chat = 1
               break
             case 1:
               if (world.isBronzeDoorFound) {
                 say(world, `Red Guard : Hello again ${player.name}, ahah do you want to open the strong door ? You can't, because I have the key and I won't give it to you ... (the guard moves to the vestiary)`)
                 world.guards.vestiary.chat = 2
-                //drawMap(world)
               }
               else {
                 say(world, `Red Guard : Hello again ${player.name}, you can explore the corridor as you want.`)
@@ -441,17 +439,12 @@ const main = () => {
               }
               break
             case 4:
-              say(world, `Red Guard : Thank you for the burger !`)
-              world.guards.vestiary.chat ++
+              say(world, `Red Guard : I think you should talk with other guards now ...`)
+              world.guards.vestiary.chat = 5
               break
             case 5:
-              say(world, `Red Guard : I think you should talk with other guards now ...`)
-              world.guards.vestiary.chat ++
-              break
-            case 6:
               say(world, `Red Guard : Stop talking to me. (the guard left)`)
               world.guards.vestiary.chat = -1
-              //drawMap(world)
               break
             default:
               say(world, `Red Guard : Come later, I'm busy.`)
@@ -482,42 +475,46 @@ const main = () => {
               say(world, `Blue Guard : Hello ${player.name}, you're not allowed to go to the library.`)
               world.isRoom6Found = true
               world.guards.library.chat = 1
-              //drawMap(world)
               break
             case 1:
-              if (world.cookedMeals.burger > 0 && world.cookedMeals.cake === 0) {
+              if (world.cookedMeals.burger > 0 && world.guards.library.burger === 0) {
                 say(world, `(${player.name} gave a burger to the blue guard) Blue Guard : Oh thanks for this burger, I see that you are a good cooker, but do you know how to cook a cake ?`)
+                world.guards.library.chat = 2
                 world.cookedMeals.burger --
                 world.guards.library.burger ++
-              }
-              else if (world.cookedMeals.cake > 0) {
-                say(world, `Blue Guard : Hello again ${player.name}, indeed you know how to cook a cake. Can you give me this cake ? (${player.name} gave a cake to the blue guard)`)
-                world.guards.library.chat = 2
-                world.cookedMeals.cake --
-                world.guards.library.cake ++
               }
               else {
                 say(world, `Blue Guard : Go ahead, I'm hungry. I miss burgers ...`)
               }
               break
             case 2:
-              if (world.cookedMeals.cake === 0) {
-                say(world, `Blue Guard : I would like to eat another cake ...`)
-              }
               if (world.cookedMeals.cake > 0) {
-                say(world, `Blue Guard : Give me this cake please, I loved the first one ! (${player.name} gave another cake to the blue guard)`)
+                say(world, `Blue Guard : Hello again ${player.name}, indeed you know how to cook a cake. Can you give me this cake ? (${player.name} gave a cake to the blue guard)`)
                 world.guards.library.chat = 3
                 world.cookedMeals.cake --
                 world.guards.library.cake ++
               }
+              else {
+                say(world, `Blue Guard : I see that you are a good cooker, but do you know how to cook a cake ?`)
+              }
               break
             case 3:
-              say(world, `Blue Guard : Thanks for the food ! But It won't be enough to let you go in the library ahah ...`) // give a silver coin to pass
+              if (world.cookedMeals.cake > 0) {
+                say(world, `Blue Guard : Give me this cake please, I loved the first one ! (${player.name} gave another cake to the blue guard)`)
+                world.guards.library.chat = 4
+                world.cookedMeals.cake --
+                world.guards.library.cake ++
+              }
+              else {
+                say(world, `Blue Guard : I would like to eat another cake ...`)
+              }
               break
             case 4:
+              say(world, `Blue Guard : Thanks for the food ! But It won't be enough to let you go in the library ahah ...`) // give silver coins to pass
+              break
+            case 5:
               say(world, `Blue Guard : Ok, you are good at bargaining ... I'll leave and let you enter the library ! (The blue guard leaves the corridor)`)
               world.guards.library.chat = -1
-              //drawMap(world)
               break
             default:
               say(world, `Blue Guard : Come later, I'm busy.`)

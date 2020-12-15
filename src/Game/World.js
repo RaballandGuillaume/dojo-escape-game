@@ -468,7 +468,9 @@ export class World {
         return
       }
     })
-    this.timer.play(this, data.world.timer.time)
+    if (!this.playerWon) {
+      this.timer.play(this, data.world.timer.time)
+    }
   }
 
   updateLocalData = () => {
