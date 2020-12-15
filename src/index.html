@@ -8,6 +8,11 @@
   </head>
   <body id="background">
     <noscript> You need to enable JavaScript to run this app. </noscript>
+    
+    <audio id="background-music" loop>
+      <source src="./sounds/background-music.mp3" type="audio/mpeg">
+    </audio>
+
     <div class="app-container">
       <div class="interface">
         <div class="primary-container">
@@ -208,7 +213,7 @@
     <div class="modal" id="leaderboard-modal">
       <div class="note-book-modal-body" id="leaderboard-modal-body">
         <span class="close-modal" id="close-leaderboard-modal">&times;</span>
-        <h2 class="modal-title">Leader Board</h2>
+        <h2 class="modal-title">Leaderboard - Top 10</h2>
         <div class="leaderboard-container" id="leaderboard-modal-container">
           <div class="leaderboard-text" id="leaderboard-modal-text"></div>
           <button type="submit" class="confirm-button" id="leaderboard-confirm-button">Ok</button>

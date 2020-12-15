@@ -32,7 +32,7 @@ export const addToLeaderBoard = (world, newLine) => {
  * @param {World} world - the world that contains the leader board
  */
 export const displayWinLeaderBoard = (world) => {
-  actionsTitle.innerText = 'Leader Board'
+  actionsTitle.innerText = 'Leaderboard - Top 10'
   winLeaderBoardText.innerHTML = ''
   for (let k = 0 ; k < world.leaderBoard.length && k < 10 ; k++) {
     const line = world.leaderBoard[k]
@@ -51,7 +51,7 @@ export const hideWinLeaderBoard = () => {
  * @param {World} world - the world that contains the leader board
  */
 export const displayLeaderBoardModal = (world) => {
-  leaderBoardModalText.innerHTML = ''
+  leaderBoardModalText.innerHTML = 'Win at least 1 game to see the leaderboard here'
   for (let k = 0 ; k < world.leaderBoard.length && k < 10 ; k++) {
     const line = world.leaderBoard[k]
     var textLine = '<p>' + String(k+1) + ' - ' + formatTime(line[0]) + ' - ' + line[1] + '</p>'

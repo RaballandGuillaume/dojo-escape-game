@@ -9,6 +9,7 @@ import { say, textElement } from '../Interface/Text'
 import Timer from './Timer'
 import { displayWinLeaderBoard } from '../Interface/LeaderBoard'
 import { displayTime } from '../Interface/Timer'
+const backGroundMusic = document.getElementById('background-music')
 
 // Custom JSON.parse and JSON.stringify functions to manage serializing functions in JSON data
 var JSONfn;
@@ -393,6 +394,7 @@ export class World {
    */
   getDataFromLocalStorage = (jsonData) => {
     const data = JSONfn.parse(jsonData)
+    backGroundMusic.play()
     this.player.name = data.world.player.name
     this.leaderBoard = data.world.leaderBoard
     this.timer = new Timer(this)
@@ -492,6 +494,7 @@ export class World {
   }
 
   beginningAction = () => {
+    backGroundMusic.play()
     this.timer.stopTimer()
     clearActions()
     setTimeout(() => {

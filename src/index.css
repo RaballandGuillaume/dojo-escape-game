@@ -511,8 +511,16 @@ body {
   flex-direction: column;
 }
 
+.mute-icon {
+  src: url('./icons/mute.png');
+}
+
+.unmute-icon {
+  src: url('./icons/unmute.png')
+}
+
 .parameter-button {
-  margin-bottom: 1rem;
+  margin-bottom: 0.6rem;
   margin-top: 0.5rem;
   padding: 0.4rem;
   border: solid 2px silver;
